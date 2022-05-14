@@ -9,6 +9,9 @@ export class PillChannelDataEntity {
   uid: string;
 
   @Column()
+  channelId: string;
+
+  @Column()
   pillName: string;
 
   @Column({ default: 0 })
@@ -35,6 +38,9 @@ export class TakeTimeEntity {
 
 @Entity('cid_rid')
 export class CidRidEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
   @Column()
   cid: string;
 
