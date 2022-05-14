@@ -4,10 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SignupReqDto, ResTokens, SigninReqDto, RefreshTokenReqDto } from './dto/auth.dto';
 import { IAuthService } from './interfaces/auth.service.interfaces';
-import { UserEntity } from './models/auth.entity';
 import * as bcrypt from 'bcrypt'
 import { AT_EXPIREIN, RT_EXPIREIN } from './constants/auth.constants';
-import { ISaveUserEntity } from './models/auth.entity.interfaces';
+import { ISaveUserEntity, UserEntity } from './models';
 
 @Injectable()
 export class AuthService implements IAuthService {

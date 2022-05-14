@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IPillDataService } from './interfaces/pill-data.service.interfaces';
 import { AddPillChannelDataReqDto, AddPillChannelDataResDto } from './dto/pill-data.dto';
-import { PillChannelDataEntity, TakeTimeEntity } from './models/pill-data.entity';
-import { ISavePillChannelData, ISaveTakeTime } from './models/pill-data.entity.interfaces';
+import { ISavePillChannelData, ISaveTakeTime, PillChannelDataEntity, TakeTimeEntity } from './models';
 
 @Injectable()
 export class PillDataService implements IPillDataService {
