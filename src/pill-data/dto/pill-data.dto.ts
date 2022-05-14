@@ -2,7 +2,7 @@ import { IsDate, IsString } from "class-validator";
 
 export class AddPillChannelDataReqDto {
     @IsString()
-    uid: string;
+    line_uid: string;
 
     @IsString()
     channelId: string;

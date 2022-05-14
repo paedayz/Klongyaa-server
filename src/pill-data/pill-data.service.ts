@@ -22,7 +22,7 @@ export class PillDataService implements IPillDataService {
             pillName,
             stock,
             takeTimes,
-            uid,
+            line_uid,
             total
         } = req
         try {
@@ -30,7 +30,7 @@ export class PillDataService implements IPillDataService {
                 channelId,
                 pillName,
                 stock,
-                uid,
+                line_uid,
                 total
             }
 
