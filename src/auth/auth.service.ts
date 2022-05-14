@@ -42,8 +42,27 @@ export class AuthService implements IAuthService {
         }
         
     }
-    signin(req: SigninReqDto): Promise<ResTokens> {
-        throw new Error('Method not implemented.');
+    async signin(req: SigninReqDto): Promise<ResTokens> {
+        try {
+            const user = await this.userRepository.findOne({
+                where: [
+                    {email: req.emailOrUsername},
+                    {username: req.emailOrUsername}
+                ]
+            })
+            
+            if(!user) throw new BadRequestException('User not found')
+
+            const passwordmatches = await bcrypt.compare(req.password, user.hashPassword)
+            if(!passwordmatches) throw new BadRequestException('Password not matches')
+
+            const tokens = await this.getToken(user.line_uid, user.email, user.username)
+            await this.updateRtHash(user.line_uid, tokens.refreshToken)
+
+            return tokens
+        } catch (error) {
+            throw new BadRequestException(error.message)
+        }
     }
     logout(line_uid: string): Promise<void> {
         throw new Error('Method not implemented.');

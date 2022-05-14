@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { SignupReqDto } from './dto/auth.dto';
+import { ResTokens, SigninReqDto, SignupReqDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -14,7 +14,7 @@ export class AuthController {
         @Body('confirmPassword') confirmPassword: string,
         @Body('line_uid') line_uid: string,
         
-    ) {
+    ) : Promise<ResTokens> {
         const req: SignupReqDto = {
             email,
             username,
@@ -23,5 +23,18 @@ export class AuthController {
             line_uid
         }
         return await this.authService.signup(req)
+    }
+
+    @Post('signin')
+    async signin(
+        @Body('emailOrUsername') emailOrUsername: string,
+        @Body('password') password: string
+    ): Promise<ResTokens> {
+        const req: SigninReqDto = {
+            emailOrUsername,
+            password
+        }
+        
+        return await this.authService.signin(req)
     }
 }
