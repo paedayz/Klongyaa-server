@@ -1,4 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
+import { GetCurrentLineId, Public } from 'src/common/decorators';
 import { AuthService } from './auth.service';
 import { ResTokens, SigninReqDto, SignupReqDto } from './dto/auth.dto';
 
@@ -6,6 +7,7 @@ import { ResTokens, SigninReqDto, SignupReqDto } from './dto/auth.dto';
 export class AuthController {
     constructor(private readonly authService: AuthService){}
 
+    @Public()
     @Post('signup')
     async signup(
         @Body('email') email: string,
@@ -25,6 +27,7 @@ export class AuthController {
         return await this.authService.signup(req)
     }
 
+    @Public()
     @Post('signin')
     async signin(
         @Body('emailOrUsername') emailOrUsername: string,
@@ -36,5 +39,10 @@ export class AuthController {
         }
         
         return await this.authService.signin(req)
+    }
+
+    @Post('logout')
+    async logout(@GetCurrentLineId() line_id: string) {
+        return await this.authService.logout(line_id)
     }
 }
