@@ -64,8 +64,16 @@ export class AuthService implements IAuthService {
             throw new BadRequestException(error.message)
         }
     }
-    logout(line_uid: string): Promise<void> {
-        throw new Error('Method not implemented.');
+    async logout(line_uid: string): Promise<void> {
+        try {
+            await this.userRepository.update({
+                line_uid
+            }, {
+                hashRt: null
+            })
+        } catch (error) {
+            throw new BadRequestException(error.message)
+        }
     }
     refreshToken(req: RefreshTokenReqDto): Promise<ResTokens> {
         throw new Error('Method not implemented.');
