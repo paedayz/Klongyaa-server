@@ -31,7 +31,7 @@ export class AuthService implements IAuthService {
             
             await this.userRepository.save(saveUser)
 
-            const tokens = await this.getToken(req.line_uid, req.email, req.username)
+            const tokens = await this.getTokens(req.line_uid, req.email, req.username)
 
             await this.updateRtHash(req.line_uid, tokens.refreshToken)
 
@@ -55,7 +55,7 @@ export class AuthService implements IAuthService {
             const passwordmatches = await bcrypt.compare(req.password, user.hashPassword)
             if(!passwordmatches) throw new BadRequestException('Password not matches')
 
-            const tokens = await this.getToken(user.line_uid, user.email, user.username)
+            const tokens = await this.getTokens(user.line_uid, user.email, user.username)
             await this.updateRtHash(user.line_uid, tokens.refreshToken)
 
             return tokens
@@ -74,8 +74,25 @@ export class AuthService implements IAuthService {
             throw new BadRequestException(error.message)
         }
     }
-    refreshToken(req: RefreshTokenReqDto): Promise<ResTokens> {
-        throw new Error('Method not implemented.');
+    async refreshToken(req: RefreshTokenReqDto): Promise<ResTokens> {
+        try {
+            const user = await this.userRepository.findOne({
+                where: {
+                    line_uid: req.line_uid
+                }
+            })
+            if(!user || !user.hashRt || !req.refreshToekn) throw new BadRequestException('Access Denied')
+
+            const rtMatches = await bcrypt.compare(req.refreshToekn, user.hashRt)
+            if(!rtMatches) throw new BadRequestException('Access Denied')
+
+            const tokens = await this.getTokens(user.line_uid, user.email, user.username)
+            await this.updateRtHash(user.line_uid, tokens.refreshToken)
+
+            return tokens
+        } catch (error) {
+            throw new BadRequestException(error.message)
+        }
     }
 
     async updateRtHash(line_uid: string, refreshToken: string) {
@@ -89,7 +106,7 @@ export class AuthService implements IAuthService {
     async hashData(data: string): Promise<string> {
         return await bcrypt.hash(data, 10)
     }
-    async getToken(line_uid: string, email: string, username: string): Promise<ResTokens> {
+    async getTokens(line_uid: string, email: string, username: string): Promise<ResTokens> {
         const [at, rt] = await Promise.all([
             // access token
             this.jwtService.signAsync({

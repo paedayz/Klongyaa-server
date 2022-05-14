@@ -1,7 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { GetCurrentLineId, Public } from 'src/common/decorators';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { GetCurrentUserData, GetCurrentUserLineUID, Public } from 'src/common/decorators';
+import { RtGuard } from 'src/common/guards';
 import { AuthService } from './auth.service';
-import { ResTokens, SigninReqDto, SignupReqDto } from './dto/auth.dto';
+import { STR_REFRESHTOKEN } from './constants/auth.constants';
+import { RefreshTokenReqDto, ResTokens, SigninReqDto, SignupReqDto } from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -42,7 +44,21 @@ export class AuthController {
     }
 
     @Post('logout')
-    async logout(@GetCurrentLineId() line_id: string) {
-        return await this.authService.logout(line_id)
+    async logout(@GetCurrentUserLineUID() line_uid: string): Promise<void> {
+        return await this.authService.logout(line_uid)
+    }
+
+    @Public()
+    @Post('refreshToken')
+    @UseGuards(RtGuard)
+    async refreshToken(
+        @GetCurrentUserLineUID() line_uid: string,
+        @GetCurrentUserData(STR_REFRESHTOKEN) rt: string,
+    ) {
+        const req: RefreshTokenReqDto = {
+            line_uid,
+            refreshToekn: rt
+        }
+        return await this.authService.refreshToken(req)
     }
 }

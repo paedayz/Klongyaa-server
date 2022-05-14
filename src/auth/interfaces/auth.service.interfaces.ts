@@ -5,7 +5,7 @@ export interface IAuthService {
     signin(req: SigninReqDto): Promise<ResTokens>;
     logout(line_uid: string): Promise<void>;
     refreshToken(req: RefreshTokenReqDto): Promise<ResTokens>;
-    updateRtHash(line_uid: string, refreshToken: string);
+    updateRtHash(line_uid: string, refreshToken: string): Promise<void>;
     hashData(data: string): Promise<string>
-    getToken(line_uid: string, email: string, username: string): Promise<ResTokens>;
+    getTokens(line_uid: string, email: string, username: string): Promise<ResTokens>;
 }
