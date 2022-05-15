@@ -57,7 +57,7 @@ export class RealPillEntity {
   pillName: string;
 
   @Column()
-  properties: string;
+  property: string;
 
   @Column()
   effect: string;
@@ -76,4 +76,22 @@ export class DangerPillEntity {
 
   @Column()
   reason: string;
+}
+
+@Entity('log_history')
+export class LogHistoryEntity {
+  @PrimaryGeneratedColumn('uuid')
+  hid: string;
+
+  @Column()
+  cid: string;
+
+  @Column()
+  uid: string;
+
+  @Column()
+  task: string;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  createdAt: Date;
 }
