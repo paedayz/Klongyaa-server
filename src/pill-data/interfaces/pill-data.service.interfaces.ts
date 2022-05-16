@@ -1,14 +1,106 @@
-import { AddPillChannelDataReqDto, PillChannelDataResDto, AddRealNameToPillCahnnelDataReqDto, PillChannelDetailDto, RealPillDataDto, AddLogHistoryReqDto, GetPillChannelDetailReqDto, HomeChannelDataResDto, GetRealPillNameByKeywordResDto, GetHistoryReqDto, GetHistoryResDto } from "../dto/pill-data.dto";
 
 export interface IPillDataService {
-    addPillChannelData(req: AddPillChannelDataReqDto): Promise<PillChannelDataResDto>;
-    addRealPillData(req: RealPillDataDto): Promise<RealPillDataDto>;
-    addRealNameToPillChannelData(req: AddRealNameToPillCahnnelDataReqDto): Promise<PillChannelDetailDto>;
-    addLogHistory(req: AddLogHistoryReqDto): Promise<void>;
-    getHomeChannelData(lineUID: string): Promise<HomeChannelDataResDto>;
-    getPillChannelDetail(req: GetPillChannelDetailReqDto): Promise<PillChannelDetailDto>;
-    getRealPillNameByKeyword(keyword: string): Promise<GetRealPillNameByKeywordResDto>;
-    getHistory(req: GetHistoryReqDto): Promise<GetHistoryResDto>;
-    getForgottenRate();
-    getPillStock();
+    addPillChannelData(req: IAddPillChannelDataReq): Promise<IPillChannelDataRes>;
+    addRealPillData(req: IRealPillData): Promise<IRealPillData>;
+    addRealNameToPillChannelData(req: IAddRealNameToPillCahnnelDataReq): Promise<IPillChannelDetail>;
+    addLogHistory(req: IAddLogHistoryReq): Promise<void>;
+    getHomeChannelData({lineUID: string}): Promise<IHomeChannelDataRes>;
+    getPillChannelDetail(req: IGetPillChannelDetailReq): Promise<IPillChannelDetail>;
+    getRealPillNameByKeyword({keyword: string}): Promise<IGetRealPillNameByKeywordRes>;
+    getHistory(req: IGetHistoryReq): Promise<IGetHistoryRes>;
+    getForgottenRate(req: IGetForgottenRateReq): Promise<IGetForgottenRateRes>;
+    getPillStock({lineUID: string}): Promise<IPillStocksRes>;
+}
+
+export interface IAddPillChannelDataReq {
+    lineUID: string;
+    channelId: string;
+    pillName: string;
+    total?: number;
+    stock: number;
+    takeTimes: string[]
+}
+
+export interface IPillChannelDataRes {
+    cid: string;
+    channelId: string;
+    pillName: string;
+    total?: number;
+    stock: number;
+    takeTimes: string[]
+    createdAt: Date
+}
+
+export interface IRealPillData {
+    pillName: string;
+    property: string;
+    effect: string;
+    dangerPills: IDangerPill[]
+}
+
+export interface IDangerPill {
+    pillName: string;
+    reason: string;
+}
+
+export interface IAddRealNameToPillCahnnelDataReq {
+    cid: string;
+    rid: string;
+}
+
+export interface IPillChannelDetail extends IPillChannelDataRes {
+    realPillData: IRealPillData;
+}
+
+export interface IAddLogHistoryReq {
+    lineUID: string;
+    channelId: string;
+    task: string;
+}
+
+export interface IHomeChannelData {
+    channelId: string;
+    pillName: string;
+}
+
+export interface IHomeChannelDataRes {
+    pillChannelDatas: IHomeChannelData[]
+}
+
+export interface IGetPillChannelDetailReq {
+    lineUID: string;
+    channelId: string;
+}
+
+export interface IGetRealPillNameByKeywordRes {
+    realPillDatas: IRealPillData[]
+}
+
+export interface IGetHistoryReq {
+    filterBy: string;
+    lineUID: string;
+}
+
+export interface IHistory {
+    time: string;
+    date: string;
+    dateTime: Date;
+    task: string;
+}
+
+export interface IGetHistoryRes {
+    histories: IHistory[]
+}
+
+export interface IGetForgottenRateReq {
+    filterBy: string;
+    lineUID: string;
+}
+
+export interface IGetForgottenRateRes {
+    rates: number[]
+}
+
+export interface IPillStocksRes {
+    pillStocks: IPillChannelDataRes[]
 }
