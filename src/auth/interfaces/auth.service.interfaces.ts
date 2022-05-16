@@ -1,11 +1,32 @@
-import { RefreshTokenReqDto, ResTokens, SigninReqDto, SignupReqDto } from "../dto/auth.dto";
-
 export interface IAuthService {
-    signup(req: SignupReqDto): Promise<ResTokens>;
-    signin(req: SigninReqDto): Promise<ResTokens>;
-    logout(line_uid: string): Promise<void>;
-    refreshToken(req: RefreshTokenReqDto): Promise<ResTokens>;
-    updateRtHash(line_uid: string, refreshToken: string): Promise<void>;
+    signup(req: ISignupReq): Promise<IResTokens>
+    signin(req: ISigninReq): Promise<IResTokens>
+    logout(lineUID: string): Promise<void>
+    refreshToken(req: IRefreshTokenReq): Promise<IResTokens>
+    updateRtHash(lineUID: string, refreshToken: string): Promise<void>
     hashData(data: string): Promise<string>
-    getTokens(line_uid: string, email: string, username: string): Promise<ResTokens>;
+    getTokens(lineUID: string, email: string, username: string): Promise<IResTokens>
+}
+
+export interface ISignupReq {
+    email: string
+    username: string
+    password: string
+    confirmPassword: string
+    lineUID: string
+}
+
+export interface ISigninReq {
+    emailOrUsername: string
+    password: string
+}
+
+export interface IRefreshTokenReq {
+    lineUID: string
+    refreshToekn: string
+}
+
+export interface IResTokens {
+    accessToken: string
+    refreshToken: string
 }

@@ -1,5 +1,5 @@
 export interface ISavePillChannelData {
-    line_uid: string;
+    lineUID: string;
     channelId: string;
     pillName: string;
     total?: number;

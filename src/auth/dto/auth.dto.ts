@@ -1,6 +1,8 @@
+import { Exclude, Expose } from "class-transformer";
 import { IsEmail, IsString } from "class-validator";
+import { IResTokens } from "../interfaces/auth.service.interfaces";
 
-export class SignupReqDto {
+export class SignupBodyDto {
     @IsEmail()
     email: string;
 
@@ -10,15 +12,17 @@ export class SignupReqDto {
     @IsString()
     password: string;
 
-    @IsString()
+    @Expose({name: 'confirm_password'})
     confirmPassword: string;
 
     @IsString()
-    line_uid: string;
+    @Expose({name: 'line_uid'})
+    lineUID: string;
 }
 
-export class SigninReqDto {
+export class SigninBodyDto {
     @IsString()
+    @Expose({name: 'email_or_username'})
     emailOrUsername: string;
 
     @IsString()
@@ -27,16 +31,23 @@ export class SigninReqDto {
 
 export class RefreshTokenReqDto {
     @IsString()
-    line_uid: string;
+    @Expose({name: 'line_uid'})
+    lineUID: string;
 
     @IsString()
-    refreshToekn: string;
+    @Expose({name: 'refresh_token'})
+    refreshToken: string;
 }
 
 export class ResTokens {
-    @IsString()
-    accessToken: string;
+    constructor(tokens: IResTokens) {
+        this.access_token = tokens.accessToken
+        this.refresh_token = tokens.refreshToken
+    }
 
     @IsString()
-    refreshToken: string;
+    access_token: string;
+
+    @IsString()
+    refresh_token: string;
 }

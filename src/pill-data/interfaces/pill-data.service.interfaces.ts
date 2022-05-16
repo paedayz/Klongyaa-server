@@ -5,7 +5,7 @@ export interface IPillDataService {
     addRealPillData(req: RealPillDataDto): Promise<RealPillDataDto>;
     addRealNameToPillChannelData(req: AddRealNameToPillCahnnelDataReqDto): Promise<PillChannelDetailDto>;
     addLogHistory(req: AddLogHistoryReqDto): Promise<void>;
-    getHomeChannelData(line_uid: string): Promise<HomeChannelDataResDto>;
+    getHomeChannelData(lineUID: string): Promise<HomeChannelDataResDto>;
     getPillChannelDetail(req: GetPillChannelDetailReqDto): Promise<PillChannelDetailDto>;
     getRealPillNameByKeyword(keyword: string): Promise<GetRealPillNameByKeywordResDto>;
     getHistory(req: GetHistoryReqDto): Promise<GetHistoryResDto>;

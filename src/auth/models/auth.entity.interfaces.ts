@@ -1,5 +1,5 @@
 export interface ISaveUserEntity {
-    line_uid: string;
+    lineUID: string;
     email: string;
     username: string;
     hashPassword: string;

@@ -2,7 +2,7 @@ import { IsDate, IsString } from "class-validator";
 
 export class AddPillChannelDataReqDto {
     @IsString()
-    line_uid: string;
+    lineUID: string;
 
     @IsString()
     channelId: string;
@@ -78,7 +78,7 @@ export class PillChannelDetailDto extends PillChannelDataResDto {
 
 export class AddLogHistoryReqDto {
     @IsString()
-    line_uid: string;
+    lineUID: string;
 
     @IsString()
     channelId: string;
@@ -101,7 +101,7 @@ export class HomeChannelDataResDto {
 
 export class GetPillChannelDetailReqDto {
     @IsString()
-    line_uid: string;
+    lineUID: string;
 
     @IsString()
     channelId: string;
@@ -116,7 +116,7 @@ export class GetHistoryReqDto {
     filterBy: string;
 
     @IsString()
-    line_uid: string;
+    lineUID: string;
 }
 
 export class HistoryDto {

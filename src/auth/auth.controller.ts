@@ -3,7 +3,8 @@ import { GetCurrentUserData, GetCurrentUserLineUID, Public } from 'src/common/de
 import { RtGuard } from 'src/common/guards';
 import { AuthService } from './auth.service';
 import { STR_REFRESHTOKEN } from './constants/auth.constants';
-import { RefreshTokenReqDto, ResTokens, SigninReqDto, SignupReqDto } from './dto/auth.dto';
+import { ResTokens, SigninBodyDto, SignupBodyDto } from './dto/auth.dto';
+import { IResTokens, ISignupReq, ISigninReq, IRefreshTokenReq } from './interfaces/auth.service.interfaces';
 
 @Controller('auth')
 export class AuthController {
@@ -12,53 +13,53 @@ export class AuthController {
     @Public()
     @Post('signup')
     async signup(
-        @Body('email') email: string,
-        @Body('username') username: string,
-        @Body('password') password: string,
-        @Body('confirmPassword') confirmPassword: string,
-        @Body('line_uid') line_uid: string,
+        @Body() body: SignupBodyDto
         
     ) : Promise<ResTokens> {
-        const req: SignupReqDto = {
-            email,
-            username,
-            password,
-            confirmPassword,
-            line_uid
+        const req: ISignupReq = {
+            email: body.email,
+            username: body.username,
+            password: body.password,
+            confirmPassword: body.confirmPassword,
+            lineUID: body.lineUID,
         }
-        return await this.authService.signup(req)
+
+        const tokens = await this.authService.signup(req)
+        return new ResTokens(tokens)
     }
 
     @Public()
     @Post('signin')
     async signin(
-        @Body('emailOrUsername') emailOrUsername: string,
-        @Body('password') password: string
+        @Body() body: SigninBodyDto
     ): Promise<ResTokens> {
-        const req: SigninReqDto = {
-            emailOrUsername,
-            password
+        const req: ISigninReq = {
+            emailOrUsername: body.emailOrUsername,
+            password: body.password
         }
         
-        return await this.authService.signin(req)
+        const tokens = await this.authService.signin(req)
+        return new ResTokens(tokens)
     }
 
     @Post('logout')
-    async logout(@GetCurrentUserLineUID() line_uid: string): Promise<void> {
-        return await this.authService.logout(line_uid)
+    async logout(@GetCurrentUserLineUID() lineUID: string): Promise<void> {
+        return await this.authService.logout(lineUID)
     }
 
     @Public()
     @Post('refreshToken')
     @UseGuards(RtGuard)
     async refreshToken(
-        @GetCurrentUserLineUID() line_uid: string,
+        @GetCurrentUserLineUID() lineUID: string,
         @GetCurrentUserData(STR_REFRESHTOKEN) rt: string,
     ) {
-        const req: RefreshTokenReqDto = {
-            line_uid,
+        const req: IRefreshTokenReq = {
+            lineUID,
             refreshToekn: rt
         }
-        return await this.authService.refreshToken(req)
+
+        const tokens = await this.authService.refreshToken(req)
+        return new ResTokens(tokens)
     }
 }

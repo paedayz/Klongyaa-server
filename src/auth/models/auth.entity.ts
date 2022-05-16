@@ -6,7 +6,7 @@ export class UserEntity {
     id: number
 
     @Column({unique: true})
-    line_uid: string;
+    lineUID: string;
 
     @Column({unique: true})
     email: string;

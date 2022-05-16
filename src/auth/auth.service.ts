@@ -2,8 +2,7 @@ import { BadGatewayException, BadRequestException, Injectable } from '@nestjs/co
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SignupReqDto, ResTokens, SigninReqDto, RefreshTokenReqDto } from './dto/auth.dto';
-import { IAuthService } from './interfaces/auth.service.interfaces';
+import { IAuthService, IRefreshTokenReq, IResTokens, ISigninReq, ISignupReq } from './interfaces/auth.service.interfaces';
 import * as bcrypt from 'bcrypt'
 import { AT_EXPIREIN, RT_EXPIREIN } from './constants/auth.constants';
 import { ISaveUserEntity, UserEntity } from './models';
@@ -17,7 +16,7 @@ export class AuthService implements IAuthService {
         private readonly jwtService: JwtService,
     ){}
 
-    async signup(req: SignupReqDto): Promise<ResTokens> {
+    async signup(req: ISignupReq): Promise<IResTokens> {
         if(req.password !== req.confirmPassword) throw new BadRequestException('Password not match')
 
         try {
@@ -26,14 +25,14 @@ export class AuthService implements IAuthService {
                 email: req.email,
                 hashPassword,
                 username: req.username,
-                line_uid: req.line_uid
+                lineUID: req.lineUID
             }
             
             await this.userRepository.save(saveUser)
 
-            const tokens = await this.getTokens(req.line_uid, req.email, req.username)
+            const tokens = await this.getTokens(req.lineUID, req.email, req.username)
 
-            await this.updateRtHash(req.line_uid, tokens.refreshToken)
+            await this.updateRtHash(req.lineUID, tokens.refreshToken)
 
             return tokens
         } catch (error) {
@@ -41,7 +40,7 @@ export class AuthService implements IAuthService {
         }
         
     }
-    async signin(req: SigninReqDto): Promise<ResTokens> {
+    async signin(req: ISigninReq): Promise<IResTokens> {
         try {
             const user = await this.userRepository.findOne({
                 where: [
@@ -55,18 +54,18 @@ export class AuthService implements IAuthService {
             const passwordmatches = await bcrypt.compare(req.password, user.hashPassword)
             if(!passwordmatches) throw new BadRequestException('Password not matches')
 
-            const tokens = await this.getTokens(user.line_uid, user.email, user.username)
-            await this.updateRtHash(user.line_uid, tokens.refreshToken)
+            const tokens = await this.getTokens(user.lineUID, user.email, user.username)
+            await this.updateRtHash(user.lineUID, tokens.refreshToken)
 
             return tokens
         } catch (error) {
             throw new BadRequestException(error.message)
         }
     }
-    async logout(line_uid: string): Promise<void> {
+    async logout(lineUID: string): Promise<void> {
         try {
             await this.userRepository.update({
-                line_uid
+                lineUID
             }, {
                 hashRt: null
             })
@@ -74,11 +73,11 @@ export class AuthService implements IAuthService {
             throw new BadRequestException(error.message)
         }
     }
-    async refreshToken(req: RefreshTokenReqDto): Promise<ResTokens> {
+    async refreshToken(req: IRefreshTokenReq): Promise<IResTokens> {
         try {
             const user = await this.userRepository.findOne({
                 where: {
-                    line_uid: req.line_uid
+                    lineUID: req.lineUID
                 }
             })
             if(!user || !user.hashRt || !req.refreshToekn) throw new BadRequestException('Access Denied')
@@ -86,8 +85,8 @@ export class AuthService implements IAuthService {
             const rtMatches = await bcrypt.compare(req.refreshToekn, user.hashRt)
             if(!rtMatches) throw new BadRequestException('Access Denied')
 
-            const tokens = await this.getTokens(user.line_uid, user.email, user.username)
-            await this.updateRtHash(user.line_uid, tokens.refreshToken)
+            const tokens = await this.getTokens(user.lineUID, user.email, user.username)
+            await this.updateRtHash(user.lineUID, tokens.refreshToken)
 
             return tokens
         } catch (error) {
@@ -95,10 +94,10 @@ export class AuthService implements IAuthService {
         }
     }
 
-    async updateRtHash(line_uid: string, refreshToken: string) {
+    async updateRtHash(lineUID: string, refreshToken: string) {
         const hashRt = await this.hashData(refreshToken)
         await this.userRepository.update({
-            line_uid
+            lineUID
         }, {
             hashRt
         })
@@ -106,11 +105,11 @@ export class AuthService implements IAuthService {
     async hashData(data: string): Promise<string> {
         return await bcrypt.hash(data, 10)
     }
-    async getTokens(line_uid: string, email: string, username: string): Promise<ResTokens> {
+    async getTokens(lineUID: string, email: string, username: string): Promise<IResTokens> {
         const [at, rt] = await Promise.all([
             // access token
             this.jwtService.signAsync({
-                sub: line_uid,
+                sub: lineUID,
                 email,
                 username
             }, {
@@ -120,7 +119,7 @@ export class AuthService implements IAuthService {
 
             // refresh token
             this.jwtService.signAsync({
-                sub: line_uid,
+                sub: lineUID,
                 email,
                 username
             }, {

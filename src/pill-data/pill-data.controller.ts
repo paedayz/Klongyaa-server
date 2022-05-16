@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { GetCurrentUserLineUID } from 'src/common/decorators';
-import { AddPillChannelDataReqDto, AddPillChannelDataResDto } from './dto/pill-data.dto';
+import { AddPillChannelDataReqDto, PillChannelDataResDto } from './dto/pill-data.dto';
 import { PillDataService } from './pill-data.service';
 
 @Controller('pill-data')
@@ -9,20 +9,20 @@ export class PillDataController {
 
     @Post('addPillChannelData')
     async addPillChannelData(
-        @GetCurrentUserLineUID() line_uid: string,
+        @GetCurrentUserLineUID() lineUID: string,
         @Body('channelId') channelId: string,
         @Body('pillName') pillName: string,
         @Body('total') total: number,
         @Body('stock') stock: number,
         @Body('takeTimes') takeTimes: string[]
         
-    ): Promise<AddPillChannelDataResDto> {
+    ): Promise<PillChannelDataResDto> {
         const req: AddPillChannelDataReqDto = {
             channelId,
             pillName,
             stock,
             takeTimes,
-            line_uid,
+            lineUID,
             total
         }
         return await this.pillDataService.addPillChannelData(req)

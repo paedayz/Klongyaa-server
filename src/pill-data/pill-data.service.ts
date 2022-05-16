@@ -2,11 +2,12 @@ import { BadGatewayException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { IPillDataService } from './interfaces/pill-data.service.interfaces';
-import { AddPillChannelDataReqDto, AddPillChannelDataResDto } from './dto/pill-data.dto';
+import { AddPillChannelDataReqDto, PillChannelDataResDto } from './dto/pill-data.dto';
 import { ISavePillChannelData, ISaveTakeTime, PillChannelDataEntity, TakeTimeEntity } from './models';
 
 @Injectable()
-export class PillDataService implements IPillDataService {
+// export class PillDataService implements IPillDataService {
+    export class PillDataService {
     constructor(
         @InjectRepository(PillChannelDataEntity)
         private readonly pillChannelDataRepository: Repository<PillChannelDataEntity>,
@@ -15,14 +16,14 @@ export class PillDataService implements IPillDataService {
         private readonly takeTimeRepository: Repository<TakeTimeEntity>
     ){}
     
-    async addPillChannelData(req: AddPillChannelDataReqDto): Promise<AddPillChannelDataResDto> {
+    async addPillChannelData(req: AddPillChannelDataReqDto): Promise<PillChannelDataResDto> {
 
         const {
             channelId,
             pillName,
             stock,
             takeTimes,
-            line_uid,
+            lineUID,
             total
         } = req
         try {
@@ -30,7 +31,7 @@ export class PillDataService implements IPillDataService {
                 channelId,
                 pillName,
                 stock,
-                line_uid,
+                lineUID,
                 total
             }
 
