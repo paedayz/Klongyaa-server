@@ -9,7 +9,7 @@ export class PillChannelDataEntity {
   lineUID: string;
 
   @Column()
-  channelId: string;
+  channelID: string;
 
   @Column()
   pillName: string;

@@ -1,34 +1,48 @@
-import { IsDate, IsString } from "class-validator";
+import { Expose } from "class-transformer";
+import { IsDate, IsNumber, IsString } from "class-validator";
+import { IPillChannelDataRes, IRealPillData } from "../interfaces/pill-data.service.interfaces";
 
-export class AddPillChannelDataReqDto {
+export class AddPillChannelDataBodyDto {
     @IsString()
-    lineUID: string;
+    @Expose({name: 'channel_id'})
+    channelID: string;
 
     @IsString()
-    channelId: string;
-
-    @IsString()
+    @Expose({name: 'pill_name'})
     pillName: string;
 
-    @IsString()
+    // @IsNumber({allowNaN: true})
     total?: number;
 
-    @IsString()
+    @IsNumber()
     stock: number;
 
     @IsString({each: true})
+    @Expose({name: 'take_times'})
     takeTimes: string[]
 }
 
 export class PillChannelDataResDto {
+    constructor(pillChannelData: IPillChannelDataRes) {
+        this.cid = pillChannelData.cid;
+        this.channel_id = pillChannelData.channelID;
+        this.pill_name = pillChannelData.pillName;
+        this.total = pillChannelData.total;
+        this.stock = pillChannelData.stock;
+        this.take_times = pillChannelData.takeTimes;
+        this.created_at = pillChannelData.createdAt
+    }
+
     @IsString()
     cid: string;
 
     @IsString()
-    channelId: string;
+    @Expose({name: 'channelID'})
+    channel_id: string;
 
     @IsString()
-    pillName: string;
+    @Expose({name: 'pillName'})
+    pill_name: string;
 
     @IsString()
     total?: number;
@@ -37,10 +51,12 @@ export class PillChannelDataResDto {
     stock: number;
 
     @IsString({each: true})
-    takeTimes: string[]
+    @Expose({name: 'takeTimes'})
+    take_times: string[]
 
     @IsDate()
-    createdAt: Date
+    @Expose({name: 'createdAt'})
+    created_at: Date
 }
 
 export class RealPillDataDto {

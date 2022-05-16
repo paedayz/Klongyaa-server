@@ -14,7 +14,7 @@ export interface IPillDataService {
 
 export interface IAddPillChannelDataReq {
     lineUID: string;
-    channelId: string;
+    channelID: string;
     pillName: string;
     total?: number;
     stock: number;
@@ -23,7 +23,7 @@ export interface IAddPillChannelDataReq {
 
 export interface IPillChannelDataRes {
     cid: string;
-    channelId: string;
+    channelID: string;
     pillName: string;
     total?: number;
     stock: number;
@@ -41,6 +41,7 @@ export interface IRealPillData {
 export interface IDangerPill {
     pillName: string;
     reason: string;
+    did: string;
 }
 
 export interface IAddRealNameToPillCahnnelDataReq {
@@ -54,12 +55,12 @@ export interface IPillChannelDetail extends IPillChannelDataRes {
 
 export interface IAddLogHistoryReq {
     lineUID: string;
-    channelId: string;
+    channelID: string;
     task: string;
 }
 
 export interface IHomeChannelData {
-    channelId: string;
+    channelID: string;
     pillName: string;
 }
 
@@ -69,7 +70,7 @@ export interface IHomeChannelDataRes {
 
 export interface IGetPillChannelDetailReq {
     lineUID: string;
-    channelId: string;
+    channelID: string;
 }
 
 export interface IGetRealPillNameByKeywordRes {

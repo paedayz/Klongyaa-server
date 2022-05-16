@@ -1,6 +1,6 @@
 export interface ISavePillChannelData {
     lineUID: string;
-    channelId: string;
+    channelID: string;
     pillName: string;
     total?: number;
     stock: number;
@@ -13,7 +13,7 @@ export interface ISaveTakeTime {
 
 export interface ISaveRealPill {
     pillName: string;
-    properties: string;
+    property: string;
     effect: string;
 }
 
@@ -28,7 +28,7 @@ export interface ISaveCidRid {
     rid: string;
 }
 
-export interface ISaveHistory {
+export interface ISaveLogHistory {
     cid: string;
     uid: string;
     task: string;
