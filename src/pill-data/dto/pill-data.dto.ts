@@ -12,9 +12,11 @@ export class AddPillChannelDataBodyDto {
     pillName: string;
 
     // @IsNumber({allowNaN: true})
+    @Expose({name: 'total'})
     total?: number;
 
     @IsNumber()
+    @Expose({name: 'stock'})
     stock: number;
 
     @IsString({each: true})
@@ -34,6 +36,7 @@ export class PillChannelDataResDto {
     }
 
     @IsString()
+    @Expose({name: 'cid'})
     cid: string;
 
     @IsString()
@@ -45,9 +48,11 @@ export class PillChannelDataResDto {
     pill_name: string;
 
     @IsString()
+    @Expose({name: 'total'})
     total?: number;
 
     @IsString()
+    @Expose({name: 'stock'})
     stock: number;
 
     @IsString({each: true})
@@ -59,9 +64,48 @@ export class PillChannelDataResDto {
     created_at: Date
 }
 
-export class RealPillDataDto {
-    @IsString()
+export class RealPillBodyDto {
+    @Expose({name: 'pill_name'})
     pillName: string;
+
+    @IsString()
+    @Expose({name: 'property'})
+    property: string;
+
+    @IsString()
+    @Expose({name: 'effect'})
+    effect: string;
+
+    @Expose({name: 'danger_pills'})
+    dangerPills?: DangerPillBodyDto[]
+}
+
+export class DangerPillBodyDto {
+    constructor(obj) {
+        this.pillName = obj['pill_name'];
+        this.reason = obj['reason']
+    }
+    @Expose({name: 'pill_name'})
+    pillName: string;
+
+    @Expose({name: 'reason'})
+    reason: string;
+}
+
+export class RealPillResDto {
+    constructor(obj: IRealPillData){
+        this.pill_name = obj.pillName;
+        this.property = obj.property;
+        this.effect = obj.effect;
+        this.danger_pills = obj.dangerPills.map(dp => {
+            return {
+                pill_name: dp.pillName,
+                reason: dp.reason
+            }
+        })
+    }
+    @IsString()
+    pill_name: string;
 
     @IsString()
     property: string;
@@ -69,12 +113,12 @@ export class RealPillDataDto {
     @IsString()
     effect: string;
 
-    dangerPills: DangerPill[]
+    danger_pills: DangerPillResDto[]
 }
 
-export class DangerPill {
+export class DangerPillResDto {
     @IsString()
-    pillName: string;
+    pill_name: string;
 
     @IsString()
     reason: string;
@@ -82,73 +126,92 @@ export class DangerPill {
 
 export class AddRealNameToPillCahnnelDataReqDto {
     @IsString()
+    @Expose({name: 'cid'})
     cid: string;
 
     @IsString()
+    @Expose({name: 'rid'})
     rid: string;
 }
 
-export class PillChannelDetailDto extends PillChannelDataResDto {
-    realPillData: RealPillDataDto;
+export class PillChannelDetailResDto extends PillChannelDataResDto {
+    @Expose({name: 'realPillData'})
+    real_pill_data: RealPillResDto;
 }
 
 export class AddLogHistoryReqDto {
     @IsString()
+    @Expose({name: 'line_uid'})
     lineUID: string;
 
     @IsString()
+    @Expose({name: 'channel_id'})
     channelId: string;
 
     @IsString()
+    @Expose({name: 'task'})
     task: string;
 }
 
 export class HomeChannelData {
     @IsString()
-    channelId: string;
+    @Expose({name: 'channelId'})
+    channel_id: string;
 
     @IsString()
-    pillName: string;
+    @Expose({name: 'pillName'})
+    pill_name: string;
 }
 
 export class HomeChannelDataResDto {
-    pillChannelDatas: HomeChannelData[]
+    @Expose({name: 'pillChannelDatas'})
+    pill_channel_datas: HomeChannelData[]
 }
 
 export class GetPillChannelDetailReqDto {
     @IsString()
+    @Expose({name: 'line_uid'})
     lineUID: string;
 
     @IsString()
+    @Expose({name: 'channel_id'})
     channelId: string;
 }
 
 export class GetRealPillNameByKeywordResDto {
-    realPillDatas: RealPillDataDto[]
+    @Expose({name: 'realPillDatas'})
+    real_pill_datas: RealPillResDto[]
 }
 
 export class GetHistoryReqDto {
     @IsString()
+    @Expose({name: 'filter_by'})
     filterBy: string;
 
     @IsString()
+    @Expose({name: 'line_uid'})
     lineUID: string;
 }
 
 export class HistoryDto {
     @IsString()
+    @Expose({name: 'time'})
     time: string;
 
     @IsString()
+    @Expose({name: 'date'})
     date: string;
 
     @IsDate()
+    @Expose({name: 'date_time'})
     dateTime: Date;
 
     @IsString()
+    @Expose({name: 'task'})
     task: string;
 }
 
 export class GetHistoryResDto {
+    @Expose({name: 'histories'})
     histories: HistoryDto[]
 }

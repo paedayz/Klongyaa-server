@@ -35,13 +35,12 @@ export interface IRealPillData {
     pillName: string;
     property: string;
     effect: string;
-    dangerPills: IDangerPill[]
+    dangerPills?: IDangerPill[]
 }
 
 export interface IDangerPill {
     pillName: string;
     reason: string;
-    did: string;
 }
 
 export interface IAddRealNameToPillCahnnelDataReq {
