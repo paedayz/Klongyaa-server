@@ -1,6 +1,6 @@
 import { Expose } from "class-transformer";
 import { IsDate, IsNumber, IsString } from "class-validator";
-import { IPillChannelDataRes, IRealPillData } from "../interfaces/pill-data.service.interfaces";
+import { IPillChannelDataRes, IPillChannelDetail, IRealPillData } from "../interfaces/pill-data.service.interfaces";
 
 export class AddPillChannelDataBodyDto {
     @IsString()
@@ -135,6 +135,10 @@ export class AddRealNameToPillCahnnelDataReqDto {
 }
 
 export class PillChannelDetailResDto extends PillChannelDataResDto {
+    constructor(obj: IPillChannelDetail) {
+        super(obj);
+        this.real_pill_data = new RealPillResDto(obj.realPillData)
+    }
     @Expose({name: 'realPillData'})
     real_pill_data: RealPillResDto;
 }

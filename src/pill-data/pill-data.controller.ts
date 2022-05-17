@@ -1,7 +1,7 @@
-import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { GetCurrentUserLineUID } from 'src/common/decorators';
-import { AddPillChannelDataBodyDto, DangerPillBodyDto, PillChannelDataResDto, RealPillBodyDto, RealPillResDto } from './dto/pill-data.dto';
-import { IAddPillChannelDataReq, IRealPillData } from './interfaces/pill-data.service.interfaces';
+import { AddPillChannelDataBodyDto, AddRealNameToPillCahnnelDataReqDto, PillChannelDataResDto, PillChannelDetailResDto, RealPillBodyDto, RealPillResDto } from './dto/pill-data.dto';
+import { IAddPillChannelDataReq, IAddRealNameToPillCahnnelDataReq, IRealPillData } from './interfaces/pill-data.service.interfaces';
 import { PillDataService } from './pill-data.service';
 
 @Controller('pill-data')
@@ -47,5 +47,19 @@ export class PillDataController {
         const realPillData = await this.pillDataService.addRealPillData(req)
 
         return new RealPillResDto(realPillData)
+    }
+
+    @Post('addRealNameToPillCahnnelDataReqDto')
+    async addRealNameToPillCahnnelDataReqDto(@Body() body: AddRealNameToPillCahnnelDataReqDto) : Promise<PillChannelDetailResDto> {
+        const req: IAddRealNameToPillCahnnelDataReq = {
+            cid: body.cid,
+            rid: body.rid
+        }
+
+        const res = await this.pillDataService.addRealNameToPillChannelData(req)
+
+        return new PillChannelDetailResDto(res)
+
+
     }
 }
