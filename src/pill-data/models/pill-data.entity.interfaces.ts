@@ -30,6 +30,6 @@ export interface ISaveCidRid {
 
 export interface ISaveLogHistory {
     cid: string;
-    uid: string;
+    lineUID: string;
     task: string;
 }

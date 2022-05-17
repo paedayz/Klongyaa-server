@@ -1,6 +1,7 @@
 import { BadGatewayException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { taskList } from './constants/pill-data.constants';
 import {
   IAddLogHistoryReq,
   IAddPillChannelDataReq,
@@ -23,6 +24,7 @@ import {
   CidRidEntity,
   DangerPillEntity,
   ISaveDangerPill,
+  ISaveLogHistory,
   ISavePillChannelData,
   ISaveRealPill,
   ISaveTakeTime,
@@ -93,7 +95,8 @@ export class PillDataService implements IPillDataService {
         total: pillChannelData.total,
       };
     } catch (error) {
-      throw new BadGatewayException(error);
+        console.log(error)
+        throw new BadGatewayException(error);
     }
   }
 
@@ -126,7 +129,8 @@ export class PillDataService implements IPillDataService {
 
       return resRealPillData;
     } catch (error) {
-      throw new BadGatewayException(error);
+        console.log(error)
+        throw new BadGatewayException(error);
     }
   }
 
@@ -191,12 +195,33 @@ export class PillDataService implements IPillDataService {
 
       return res;
     } catch (error) {
-      throw new BadGatewayException(error);
+        console.log(error)
+        throw new BadGatewayException(error);
     }
   }
 
-  addLogHistory(req: IAddLogHistoryReq): Promise<void> {
-    throw new Error('Method not implemented.');
+  async addLogHistory(req: IAddLogHistoryReq): Promise<void> {
+      
+    try {
+        if(taskList.includes(req.task)) {
+            const pillChannelData =  await this.pillChannelDataRepository.findOne({where: [
+                {channelID: req.channelID},
+                {lineUID: req.lineUID}
+            ]})
+            const saveLogHistoryData: ISaveLogHistory = {
+                cid: pillChannelData.cid,
+                lineUID: req.lineUID,
+                task: req.task
+            }
+
+            await this.logHistoryRepository.save(saveLogHistoryData)
+        } else {
+            throw new BadGatewayException('Task not matches')
+        }
+    } catch (error) {
+        console.log(error)
+        throw new BadGatewayException(error);
+    }
   }
 
   getHomeChannelData({

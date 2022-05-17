@@ -143,14 +143,10 @@ export class PillChannelDetailResDto extends PillChannelDataResDto {
     real_pill_data: RealPillResDto;
 }
 
-export class AddLogHistoryReqDto {
-    @IsString()
-    @Expose({name: 'line_uid'})
-    lineUID: string;
-
+export class AddLogHistoryBodyDto {
     @IsString()
     @Expose({name: 'channel_id'})
-    channelId: string;
+    channelID: string;
 
     @IsString()
     @Expose({name: 'task'})
@@ -159,7 +155,7 @@ export class AddLogHistoryReqDto {
 
 export class HomeChannelData {
     @IsString()
-    @Expose({name: 'channelId'})
+    @Expose({name: 'channelID'})
     channel_id: string;
 
     @IsString()
@@ -179,7 +175,7 @@ export class GetPillChannelDetailReqDto {
 
     @IsString()
     @Expose({name: 'channel_id'})
-    channelId: string;
+    channelID: string;
 }
 
 export class GetRealPillNameByKeywordResDto {

@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { GetCurrentUserLineUID } from 'src/common/decorators';
-import { AddPillChannelDataBodyDto, AddRealNameToPillCahnnelDataReqDto, PillChannelDataResDto, PillChannelDetailResDto, RealPillBodyDto, RealPillResDto } from './dto/pill-data.dto';
-import { IAddPillChannelDataReq, IAddRealNameToPillCahnnelDataReq, IRealPillData } from './interfaces/pill-data.service.interfaces';
+import { AddLogHistoryBodyDto, AddPillChannelDataBodyDto, AddRealNameToPillCahnnelDataReqDto, PillChannelDataResDto, PillChannelDetailResDto, RealPillBodyDto, RealPillResDto } from './dto/pill-data.dto';
+import { IAddLogHistoryReq, IAddPillChannelDataReq, IAddRealNameToPillCahnnelDataReq, IRealPillData } from './interfaces/pill-data.service.interfaces';
 import { PillDataService } from './pill-data.service';
 
 @Controller('pill-data')
@@ -59,7 +59,19 @@ export class PillDataController {
         const res = await this.pillDataService.addRealNameToPillChannelData(req)
 
         return new PillChannelDetailResDto(res)
+    }
 
-
+    @Post('addLogHistory')
+    async addLogHistory(
+        @Body() body: AddLogHistoryBodyDto,
+        @GetCurrentUserLineUID() lineUID: string
+        ): Promise<void> {
+        const req: IAddLogHistoryReq = {
+            channelID: body.channelID,
+            task: body.task,
+            lineUID
+        }
+        console.log(req)
+        return await this.pillDataService.addLogHistory(req)
     }
 }

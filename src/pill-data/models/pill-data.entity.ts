@@ -87,7 +87,7 @@ export class LogHistoryEntity {
   cid: string;
 
   @Column()
-  uid: string;
+  lineUID: string;
 
   @Column()
   task: string;
