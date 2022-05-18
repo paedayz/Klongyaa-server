@@ -1,6 +1,6 @@
 import { Expose } from "class-transformer";
 import { IsDate, IsNumber, IsString } from "class-validator";
-import { IGetHistoryRes, IGetRealPillNameByKeywordRes, IHomeChannelDataRes, IPillChannelDataRes, IPillChannelDetail, IRealPillData } from "../interfaces/pill-data.service.interfaces";
+import { IGetHistoryRes, IGetRealPillNameByKeywordRes, IHomeChannelDataRes, IPillChannelDataRes, IPillChannelDetail, IPillStocksRes, IRealPillData } from "../interfaces/pill-data.service.interfaces";
 
 export class AddPillChannelDataBodyDto {
     @IsString()
@@ -241,4 +241,13 @@ export class GetHistoryResDto {
     }
     @Expose({name: 'histories'})
     histories: HistoryDto[]
+}
+
+export class GetPillStockDto {
+    constructor(obj: IPillStocksRes) {
+        this.pillStock = obj.pillStocks.map(pill => {
+            return new PillChannelDataResDto(pill)
+        })
+    }
+    pillStock: PillChannelDataResDto[]
 }

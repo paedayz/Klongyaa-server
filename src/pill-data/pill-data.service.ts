@@ -368,6 +368,31 @@ export class PillDataService implements IPillDataService {
   }
 
   async getPillStock(lineUID: string): Promise<IPillStocksRes> {
-    throw new Error('Method not implemented.');
+    try {
+      const pillChannelDatas = await this.pillChannelDataRepository.find({
+        where: {
+          lineUID
+        },
+      });
+
+      const pillStocks: IPillStocksRes = {
+         pillStocks: await Promise.all(pillChannelDatas.map(async(pill): Promise<IPillChannelDataRes> => {
+          const takeTimes = await this.takeTimeRepository.find({where: {cid: pill.cid}})
+          return {
+            channelID: pill.channelID,
+            cid: pill.cid,
+            createdAt: pill.createdAt,
+            pillName: pill.pillName,
+            stock: pill.stock,
+            total: pill.total,
+            takeTimes: takeTimes.map(time => time.time)
+          }
+         }))
+      }
+
+      return pillStocks
+    } catch (error) {
+      
+    }
   }
 }
