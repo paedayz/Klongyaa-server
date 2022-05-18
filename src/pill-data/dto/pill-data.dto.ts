@@ -94,6 +94,7 @@ export class DangerPillBodyDto {
 
 export class RealPillResDto {
     constructor(obj: IRealPillData){
+        this.rid = obj.rid;
         this.pill_name = obj.pillName;
         this.property = obj.property;
         this.effect = obj.effect;
@@ -104,6 +105,9 @@ export class RealPillResDto {
             }
         })
     }
+    @IsString()
+    rid: string;
+
     @IsString()
     pill_name: string;
 
@@ -191,6 +195,7 @@ export class GetRealPillNameByKeywordResDto {
     constructor(obj: IGetRealPillNameByKeywordRes) {
         this.real_pill_datas = obj.realPillDatas.map((pill): RealPillResDto => {
             return {
+                rid: pill.rid,
                 danger_pills: pill.dangerPills.map(dp => {
                     return {
                         pill_name: dp.pillName,

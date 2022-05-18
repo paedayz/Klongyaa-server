@@ -32,6 +32,7 @@ export interface IPillChannelDataRes {
 }
 
 export interface IRealPillData {
+    rid?: string;
     pillName: string;
     property: string;
     effect: string;

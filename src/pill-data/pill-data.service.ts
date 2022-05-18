@@ -124,6 +124,7 @@ export class PillDataService implements IPillDataService {
       );
 
       const resRealPillData: IRealPillData = {
+        rid: realPillData.rid,
         pillName: realPillData.pillName,
         property: realPillData.property,
         effect: realPillData.effect,
@@ -180,6 +181,7 @@ export class PillDataService implements IPillDataService {
       ]);
 
       const realPillData: IRealPillData = {
+        rid: realPillQueryResData.rid,
         pillName: realPillQueryResData.pillName,
         property: realPillQueryResData.property,
         effect: realPillQueryResData.effect,
@@ -283,6 +285,7 @@ export class PillDataService implements IPillDataService {
           property: realPillQueryResData.property,
           effect: realPillQueryResData.effect,
           dangerPills: dangerPillQueryResData,
+          rid: realPillQueryResData.rid
         };
       }
 
@@ -322,6 +325,7 @@ export class PillDataService implements IPillDataService {
             property: pill.property,
             effect: pill.effect,
             dangerPills,
+            rid: pill.rid
           };
         }),
       );
