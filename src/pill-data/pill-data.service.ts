@@ -1,7 +1,10 @@
-import { BadGatewayException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
-import { taskList } from './constants/pill-data.constants';
+import {
+  getHistoryFilterByList,
+  taskList,
+} from './constants/pill-data.constants';
 import {
   IAddLogHistoryReq,
   IAddPillChannelDataReq,
@@ -96,7 +99,7 @@ export class PillDataService implements IPillDataService {
       };
     } catch (error) {
       console.log(error);
-      throw new BadGatewayException(error);
+      throw new BadRequestException(error);
     }
   }
 
@@ -130,7 +133,7 @@ export class PillDataService implements IPillDataService {
       return resRealPillData;
     } catch (error) {
       console.log(error);
-      throw new BadGatewayException(error);
+      throw new BadRequestException(error);
     }
   }
 
@@ -202,7 +205,7 @@ export class PillDataService implements IPillDataService {
       return res;
     } catch (error) {
       console.log(error);
-      throw new BadGatewayException(error);
+      throw new BadRequestException(error);
     }
   }
 
@@ -220,11 +223,11 @@ export class PillDataService implements IPillDataService {
 
         await this.logHistoryRepository.save(saveLogHistoryData);
       } else {
-        throw new BadGatewayException('Task not matches');
+        throw new BadRequestException('Task not matches');
       }
     } catch (error) {
       console.log(error);
-      throw new BadGatewayException(error);
+      throw new BadRequestException(error);
     }
   }
 
@@ -243,7 +246,7 @@ export class PillDataService implements IPillDataService {
       };
     } catch (error) {
       console.log(error);
-      throw new BadGatewayException(error);
+      throw new BadRequestException(error);
     }
   }
 
@@ -295,7 +298,7 @@ export class PillDataService implements IPillDataService {
       };
     } catch (error) {
       console.log(error);
-      throw new BadGatewayException(error);
+      throw new BadRequestException(error);
     }
   }
 
@@ -327,12 +330,35 @@ export class PillDataService implements IPillDataService {
       };
     } catch (error) {
       console.log(error);
-      throw new BadGatewayException(error);
+      throw new BadRequestException(error);
     }
   }
 
   async getHistory(req: IGetHistoryReq): Promise<IGetHistoryRes> {
-    throw new Error('Method not implemented.');
+    try {
+      if (!getHistoryFilterByList.includes(req.filterBy))
+        throw new BadRequestException('Filter not matches');
+      var curr = new Date(); // get current date
+      var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
+      var last = first + 6; // last day is the first day + 6
+
+      var firstday = new Date(curr.setDate(first)).toDateString();
+      var lastday = new Date(curr.setDate(last)).toDateString();
+      console.log(firstday);
+      console.log(lastday)
+      const logHistoryDatas = await this.logHistoryRepository
+        .createQueryBuilder()
+        .where('LogHistoryEntity.createdAt BETWEEN :begin AND :end', {
+          begin: firstday,
+          end: lastday,
+        })
+        .getMany();
+ 
+      return null
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(error);
+    }
   }
 
   async getForgottenRate(
