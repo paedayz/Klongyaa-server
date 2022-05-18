@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { GetCurrentUserLineUID } from 'src/common/decorators';
 import { AddLogHistoryBodyDto, AddPillChannelDataBodyDto, AddRealNameToPillCahnnelDataReqDto, GetPillChannelDetailReqDto, HomeChannelData, HomeChannelDataResDto, PillChannelDataResDto, PillChannelDetailResDto, RealPillBodyDto, RealPillResDto } from './dto/pill-data.dto';
 import { IAddLogHistoryReq, IAddPillChannelDataReq, IAddRealNameToPillCahnnelDataReq, IRealPillData } from './interfaces/pill-data.service.interfaces';
@@ -79,5 +79,19 @@ export class PillDataController {
     async getHomeChannelData(@GetCurrentUserLineUID() lineUID: string): Promise<HomeChannelDataResDto> {
         const res = await this.pillDataService.getHomeChannelData(lineUID)
         return new HomeChannelDataResDto(res)
+    }
+
+    @Get('getPillChannelDetail/:channelID')
+    async getPillChannelDetail(
+        @Param('channelID') channelID: string,
+        @GetCurrentUserLineUID() lineUID: string
+        ): Promise<PillChannelDetailResDto> {
+        const req: GetPillChannelDetailReqDto = {
+            channelID,
+            lineUID
+        }
+        const res = await this.pillDataService.getPillChannelDetail(req)
+        return res? new PillChannelDetailResDto(res): null
+
     }
 }

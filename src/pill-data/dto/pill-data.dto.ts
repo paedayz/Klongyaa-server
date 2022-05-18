@@ -137,7 +137,7 @@ export class AddRealNameToPillCahnnelDataReqDto {
 export class PillChannelDetailResDto extends PillChannelDataResDto {
     constructor(obj: IPillChannelDetail) {
         super(obj);
-        this.real_pill_data = new RealPillResDto(obj.realPillData)
+        this.real_pill_data = obj.realPillData ? new RealPillResDto(obj.realPillData): null
     }
     @Expose({name: 'realPillData'})
     real_pill_data: RealPillResDto;

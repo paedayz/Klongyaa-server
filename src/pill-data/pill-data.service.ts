@@ -243,7 +243,10 @@ export class PillDataService implements IPillDataService {
     req: IGetPillChannelDetailReq,
   ): Promise<IPillChannelDetail> {
     try {
-        const pillChannelDatas = await this.pillChannelDataRepository.findOne({where: [{lineUID: req.lineUID}, {channelID: req.channelID}]})
+        const pillChannelDatas = await this.pillChannelDataRepository.findOne({where: {lineUID: req.lineUID, channelID: req.channelID}})
+
+        if(!pillChannelDatas) return null;
+
         const cidRidData = await this.cidRidRepository.findOne({where: {cid: pillChannelDatas.cid}})
         const takeTimesData = await this.takeTimeRepository.find({
             where: { cid: pillChannelDatas.cid },
@@ -272,6 +275,7 @@ export class PillDataService implements IPillDataService {
                 dangerPills: dangerPillQueryResData
             }
         }
+
         return {
             channelID: pillChannelDatas.channelID,
             cid: pillChannelDatas.cid,
