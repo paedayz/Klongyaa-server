@@ -95,8 +95,8 @@ export class PillDataService implements IPillDataService {
         total: pillChannelData.total,
       };
     } catch (error) {
-        console.log(error)
-        throw new BadGatewayException(error);
+      console.log(error);
+      throw new BadGatewayException(error);
     }
   }
 
@@ -129,8 +129,8 @@ export class PillDataService implements IPillDataService {
 
       return resRealPillData;
     } catch (error) {
-        console.log(error)
-        throw new BadGatewayException(error);
+      console.log(error);
+      throw new BadGatewayException(error);
     }
   }
 
@@ -144,7 +144,7 @@ export class PillDataService implements IPillDataService {
           cid: req.cid,
         },
       });
-      const queryGetTakeTimsData = this.takeTimeRepository.find({
+      const queryGetTakeTimesData = this.takeTimeRepository.find({
         where: { cid: req.cid },
       });
       const queryGetRealPillData = this.realPillRepository.findOne({
@@ -165,7 +165,7 @@ export class PillDataService implements IPillDataService {
       ] = await Promise.all([
         queryAddCidRid,
         queryGetPillChannelData,
-        queryGetTakeTimsData,
+        queryGetTakeTimesData,
         queryGetRealPillData,
         queryGetDangerPillData,
       ]);
@@ -195,66 +195,117 @@ export class PillDataService implements IPillDataService {
 
       return res;
     } catch (error) {
-        console.log(error)
-        throw new BadGatewayException(error);
+      console.log(error);
+      throw new BadGatewayException(error);
     }
   }
 
   async addLogHistory(req: IAddLogHistoryReq): Promise<void> {
-      
     try {
-        if(taskList.includes(req.task)) {
-            const pillChannelData =  await this.pillChannelDataRepository.findOne({where: [
-                {channelID: req.channelID},
-                {lineUID: req.lineUID}
-            ]})
-            const saveLogHistoryData: ISaveLogHistory = {
-                cid: pillChannelData.cid,
-                lineUID: req.lineUID,
-                task: req.task
-            }
+      if (taskList.includes(req.task)) {
+        const pillChannelData = await this.pillChannelDataRepository.findOne({
+          where: [{ channelID: req.channelID }, { lineUID: req.lineUID }],
+        });
+        const saveLogHistoryData: ISaveLogHistory = {
+          cid: pillChannelData.cid,
+          lineUID: req.lineUID,
+          task: req.task,
+        };
 
-            await this.logHistoryRepository.save(saveLogHistoryData)
-        } else {
-            throw new BadGatewayException('Task not matches')
+        await this.logHistoryRepository.save(saveLogHistoryData);
+      } else {
+        throw new BadGatewayException('Task not matches');
+      }
+    } catch (error) {
+      console.log(error);
+      throw new BadGatewayException(error);
+    }
+  }
+
+  async getHomeChannelData(lineUID: string ): Promise<IHomeChannelDataRes> {
+    try {
+        const pillChannelDatas = await this.pillChannelDataRepository.find({where: {lineUID: lineUID}})
+        return {
+            pillChannelDatas: pillChannelDatas.map(pill => {
+                return {
+                    channelID: pill.channelID,
+                    pillName: pill.pillName
+                }
+            })
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
         throw new BadGatewayException(error);
     }
   }
 
-  getHomeChannelData({
-    lineUID: string,
-  }: {
-    lineUID: any;
-  }): Promise<IHomeChannelDataRes> {
-    throw new Error('Method not implemented.');
-  }
-
-  getPillChannelDetail(
+  async getPillChannelDetail(
     req: IGetPillChannelDetailReq,
   ): Promise<IPillChannelDetail> {
-    throw new Error('Method not implemented.');
+    try {
+        const pillChannelDatas = await this.pillChannelDataRepository.findOne({where: [{lineUID: req.lineUID}, {channelID: req.channelID}]})
+        const cidRidData = await this.cidRidRepository.findOne({where: {cid: pillChannelDatas.cid}})
+        const takeTimesData = await this.takeTimeRepository.find({
+            where: { cid: pillChannelDatas.cid },
+          });
+        let realPillData: IRealPillData = null;
+        if(cidRidData) {
+            const queryGetRealPillData = this.realPillRepository.findOne({
+                where: {
+                  rid: cidRidData.rid,
+                },
+              });
+              const queryGetDangerPillData = this.dangerPillRepository.find({
+                where: { rid: cidRidData.rid },
+              });
+            const [
+                realPillQueryResData,
+                dangerPillQueryResData,
+              ] = await Promise.all([
+                queryGetRealPillData,
+                queryGetDangerPillData,
+              ]);
+            realPillData = {
+                pillName: realPillQueryResData.pillName,
+                property: realPillQueryResData.property,
+                effect: realPillQueryResData.effect,
+                dangerPills: dangerPillQueryResData
+            }
+        }
+        return {
+            channelID: pillChannelDatas.channelID,
+            cid: pillChannelDatas.cid,
+            createdAt: pillChannelDatas.createdAt,
+            pillName: pillChannelDatas.pillName,
+            stock: pillChannelDatas.stock,
+            total: pillChannelDatas.total,
+            takeTimes: takeTimesData.map((obj) => obj.time),
+            realPillData: realPillData,
+        }
+
+    } catch (error) {
+        console.log(error);
+        throw new BadGatewayException(error);
+    }
   }
 
-  getRealPillNameByKeyword({
+  async getRealPillNameByKeyword(
     keyword: string,
-  }: {
-    keyword: any;
-  }): Promise<IGetRealPillNameByKeywordRes> {
+  ): Promise<IGetRealPillNameByKeywordRes> {
     throw new Error('Method not implemented.');
   }
 
-  getHistory(req: IGetHistoryReq): Promise<IGetHistoryRes> {
+  async getHistory(req: IGetHistoryReq): Promise<IGetHistoryRes> {
     throw new Error('Method not implemented.');
   }
 
-  getForgottenRate(req: IGetForgottenRateReq): Promise<IGetForgottenRateRes> {
+  async getForgottenRate(
+    req: IGetForgottenRateReq,
+  ): Promise<IGetForgottenRateRes> {
     throw new Error('Method not implemented.');
   }
 
-  getPillStock({ lineUID: string }: { lineUID: any }): Promise<IPillStocksRes> {
+  async getPillStock( lineUID: string ): Promise<IPillStocksRes> {
     throw new Error('Method not implemented.');
   }
 }

@@ -4,12 +4,12 @@ export interface IPillDataService {
     addRealPillData(req: IRealPillData): Promise<IRealPillData>;
     addRealNameToPillChannelData(req: IAddRealNameToPillCahnnelDataReq): Promise<IPillChannelDetail>;
     addLogHistory(req: IAddLogHistoryReq): Promise<void>;
-    getHomeChannelData({lineUID: string}): Promise<IHomeChannelDataRes>;
+    getHomeChannelData(lineUID: string): Promise<IHomeChannelDataRes>;
     getPillChannelDetail(req: IGetPillChannelDetailReq): Promise<IPillChannelDetail>;
-    getRealPillNameByKeyword({keyword: string}): Promise<IGetRealPillNameByKeywordRes>;
+    getRealPillNameByKeyword(keyword: string): Promise<IGetRealPillNameByKeywordRes>;
     getHistory(req: IGetHistoryReq): Promise<IGetHistoryRes>;
     getForgottenRate(req: IGetForgottenRateReq): Promise<IGetForgottenRateRes>;
-    getPillStock({lineUID: string}): Promise<IPillStocksRes>;
+    getPillStock(lineUID: string): Promise<IPillStocksRes>;
 }
 
 export interface IAddPillChannelDataReq {

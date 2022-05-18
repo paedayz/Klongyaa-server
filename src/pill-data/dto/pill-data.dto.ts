@@ -1,6 +1,6 @@
 import { Expose } from "class-transformer";
 import { IsDate, IsNumber, IsString } from "class-validator";
-import { IPillChannelDataRes, IPillChannelDetail, IRealPillData } from "../interfaces/pill-data.service.interfaces";
+import { IHomeChannelDataRes, IPillChannelDataRes, IPillChannelDetail, IRealPillData } from "../interfaces/pill-data.service.interfaces";
 
 export class AddPillChannelDataBodyDto {
     @IsString()
@@ -164,6 +164,15 @@ export class HomeChannelData {
 }
 
 export class HomeChannelDataResDto {
+    constructor(obj: IHomeChannelDataRes) {
+        this.pill_channel_datas = obj.pillChannelDatas.map(pill => {
+            return {
+                channel_id: pill.channelID,
+                pill_name: pill.pillName
+            }
+        })
+    }
+    
     @Expose({name: 'pillChannelDatas'})
     pill_channel_datas: HomeChannelData[]
 }
