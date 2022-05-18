@@ -138,7 +138,13 @@ export class PillDataService implements IPillDataService {
     req: IAddRealNameToPillCahnnelDataReq,
   ): Promise<IPillChannelDetail> {
     try {
-      const queryAddCidRid = this.cidRidRepository.save(req);
+      const findChannelWithRealPillData = this.cidRidRepository.findOne({where: {cid: req.cid}})
+      if(findChannelWithRealPillData) {
+        await this.cidRidRepository.update({cid: req.cid}, {rid: req.rid})
+      } else {
+        await this.cidRidRepository.save(req);
+      }
+      
       const queryGetPillChannelData = this.pillChannelDataRepository.findOne({
         where: {
           cid: req.cid,
@@ -157,13 +163,11 @@ export class PillDataService implements IPillDataService {
       });
 
       const [
-        cidRidQueryResData,
         pillChannelQueryResData,
         takeTimeQueryResData,
         realPillQueryResData,
         dangerPillQueryResData,
       ] = await Promise.all([
-        queryAddCidRid,
         queryGetPillChannelData,
         queryGetTakeTimesData,
         queryGetRealPillData,
