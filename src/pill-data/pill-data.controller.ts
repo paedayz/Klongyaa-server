@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { GetCurrentUserLineUID } from 'src/common/decorators';
-import { AddLogHistoryBodyDto, AddPillChannelDataBodyDto, AddRealNameToPillCahnnelDataReqDto, GetPillChannelDetailReqDto, HomeChannelData, HomeChannelDataResDto, PillChannelDataResDto, PillChannelDetailResDto, RealPillBodyDto, RealPillResDto } from './dto/pill-data.dto';
+import { AddLogHistoryBodyDto, AddPillChannelDataBodyDto, AddRealNameToPillCahnnelDataReqDto, GetPillChannelDetailReqDto, GetRealPillNameByKeywordResDto, HomeChannelData, HomeChannelDataResDto, PillChannelDataResDto, PillChannelDetailResDto, RealPillBodyDto, RealPillResDto } from './dto/pill-data.dto';
 import { IAddLogHistoryReq, IAddPillChannelDataReq, IAddRealNameToPillCahnnelDataReq, IRealPillData } from './interfaces/pill-data.service.interfaces';
 import { PillDataService } from './pill-data.service';
 
@@ -93,5 +93,15 @@ export class PillDataController {
         const res = await this.pillDataService.getPillChannelDetail(req)
         return res? new PillChannelDetailResDto(res): null
 
+    }
+
+    @Get('getRealPillNameByKeyword/:keyword')
+    async getRealPillNameByKeyword(
+        @Param('keyword') keyword: string,
+    ): Promise<GetRealPillNameByKeywordResDto> {
+        console.log(keyword)
+        const res = await this.pillDataService.getRealPillNameByKeyword(keyword)
+
+        return new GetRealPillNameByKeywordResDto(res)
     }
 }

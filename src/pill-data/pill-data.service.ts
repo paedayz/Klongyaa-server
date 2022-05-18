@@ -1,6 +1,6 @@
 import { BadGatewayException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { taskList } from './constants/pill-data.constants';
 import {
   IAddLogHistoryReq,
@@ -138,13 +138,15 @@ export class PillDataService implements IPillDataService {
     req: IAddRealNameToPillCahnnelDataReq,
   ): Promise<IPillChannelDetail> {
     try {
-      const findChannelWithRealPillData = this.cidRidRepository.findOne({where: {cid: req.cid}})
-      if(findChannelWithRealPillData) {
-        await this.cidRidRepository.update({cid: req.cid}, {rid: req.rid})
+      const findChannelWithRealPillData = this.cidRidRepository.findOne({
+        where: { cid: req.cid },
+      });
+      if (findChannelWithRealPillData) {
+        await this.cidRidRepository.update({ cid: req.cid }, { rid: req.rid });
       } else {
         await this.cidRidRepository.save(req);
       }
-      
+
       const queryGetPillChannelData = this.pillChannelDataRepository.findOne({
         where: {
           cid: req.cid,
@@ -226,20 +228,22 @@ export class PillDataService implements IPillDataService {
     }
   }
 
-  async getHomeChannelData(lineUID: string ): Promise<IHomeChannelDataRes> {
+  async getHomeChannelData(lineUID: string): Promise<IHomeChannelDataRes> {
     try {
-        const pillChannelDatas = await this.pillChannelDataRepository.find({where: {lineUID: lineUID}})
-        return {
-            pillChannelDatas: pillChannelDatas.map(pill => {
-                return {
-                    channelID: pill.channelID,
-                    pillName: pill.pillName
-                }
-            })
-        }
+      const pillChannelDatas = await this.pillChannelDataRepository.find({
+        where: { lineUID: lineUID },
+      });
+      return {
+        pillChannelDatas: pillChannelDatas.map((pill) => {
+          return {
+            channelID: pill.channelID,
+            pillName: pill.pillName,
+          };
+        }),
+      };
     } catch (error) {
-        console.log(error);
-        throw new BadGatewayException(error);
+      console.log(error);
+      throw new BadGatewayException(error);
     }
   }
 
@@ -247,60 +251,84 @@ export class PillDataService implements IPillDataService {
     req: IGetPillChannelDetailReq,
   ): Promise<IPillChannelDetail> {
     try {
-        const pillChannelDatas = await this.pillChannelDataRepository.findOne({where: {lineUID: req.lineUID, channelID: req.channelID}})
+      const pillChannelDatas = await this.pillChannelDataRepository.findOne({
+        where: { lineUID: req.lineUID, channelID: req.channelID },
+      });
 
-        if(!pillChannelDatas) return null;
+      if (!pillChannelDatas) return null;
 
-        const cidRidData = await this.cidRidRepository.findOne({where: {cid: pillChannelDatas.cid}})
-        const takeTimesData = await this.takeTimeRepository.find({
-            where: { cid: pillChannelDatas.cid },
-          });
-        let realPillData: IRealPillData = null;
-        if(cidRidData) {
-            const queryGetRealPillData = this.realPillRepository.findOne({
-                where: {
-                  rid: cidRidData.rid,
-                },
-              });
-              const queryGetDangerPillData = this.dangerPillRepository.find({
-                where: { rid: cidRidData.rid },
-              });
-            const [
-                realPillQueryResData,
-                dangerPillQueryResData,
-              ] = await Promise.all([
-                queryGetRealPillData,
-                queryGetDangerPillData,
-              ]);
-            realPillData = {
-                pillName: realPillQueryResData.pillName,
-                property: realPillQueryResData.property,
-                effect: realPillQueryResData.effect,
-                dangerPills: dangerPillQueryResData
-            }
-        }
+      const cidRidData = await this.cidRidRepository.findOne({
+        where: { cid: pillChannelDatas.cid },
+      });
+      const takeTimesData = await this.takeTimeRepository.find({
+        where: { cid: pillChannelDatas.cid },
+      });
+      let realPillData: IRealPillData = null;
+      if (cidRidData) {
+        const queryGetRealPillData = this.realPillRepository.findOne({
+          where: {
+            rid: cidRidData.rid,
+          },
+        });
+        const queryGetDangerPillData = this.dangerPillRepository.find({
+          where: { rid: cidRidData.rid },
+        });
+        const [realPillQueryResData, dangerPillQueryResData] =
+          await Promise.all([queryGetRealPillData, queryGetDangerPillData]);
+        realPillData = {
+          pillName: realPillQueryResData.pillName,
+          property: realPillQueryResData.property,
+          effect: realPillQueryResData.effect,
+          dangerPills: dangerPillQueryResData,
+        };
+      }
 
-        return {
-            channelID: pillChannelDatas.channelID,
-            cid: pillChannelDatas.cid,
-            createdAt: pillChannelDatas.createdAt,
-            pillName: pillChannelDatas.pillName,
-            stock: pillChannelDatas.stock,
-            total: pillChannelDatas.total,
-            takeTimes: takeTimesData.map((obj) => obj.time),
-            realPillData: realPillData,
-        }
-
+      return {
+        channelID: pillChannelDatas.channelID,
+        cid: pillChannelDatas.cid,
+        createdAt: pillChannelDatas.createdAt,
+        pillName: pillChannelDatas.pillName,
+        stock: pillChannelDatas.stock,
+        total: pillChannelDatas.total,
+        takeTimes: takeTimesData.map((obj) => obj.time),
+        realPillData: realPillData,
+      };
     } catch (error) {
-        console.log(error);
-        throw new BadGatewayException(error);
+      console.log(error);
+      throw new BadGatewayException(error);
     }
   }
 
   async getRealPillNameByKeyword(
     keyword: string,
   ): Promise<IGetRealPillNameByKeywordRes> {
-    throw new Error('Method not implemented.');
+    try {
+      const realPills = await this.realPillRepository
+        .createQueryBuilder()
+        .where('LOWER(RealPillEntity.pillName) LIKE :pillName', {
+          pillName: `%${keyword.toLowerCase()}%`,
+        })
+        .getMany();
+      const realPillDatas: IRealPillData[] = await Promise.all(
+        realPills.map(async (pill): Promise<IRealPillData> => {
+          const dangerPills = await this.dangerPillRepository.find({
+            where: { rid: pill.rid },
+          });
+          return {
+            pillName: pill.pillName,
+            property: pill.property,
+            effect: pill.effect,
+            dangerPills,
+          };
+        }),
+      );
+      return {
+        realPillDatas,
+      };
+    } catch (error) {
+      console.log(error);
+      throw new BadGatewayException(error);
+    }
   }
 
   async getHistory(req: IGetHistoryReq): Promise<IGetHistoryRes> {
@@ -313,7 +341,7 @@ export class PillDataService implements IPillDataService {
     throw new Error('Method not implemented.');
   }
 
-  async getPillStock( lineUID: string ): Promise<IPillStocksRes> {
+  async getPillStock(lineUID: string): Promise<IPillStocksRes> {
     throw new Error('Method not implemented.');
   }
 }
