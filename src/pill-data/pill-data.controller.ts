@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { GetCurrentUserLineUID } from 'src/common/decorators';
-import { AddLogHistoryBodyDto, AddPillChannelDataBodyDto, AddRealNameToPillCahnnelDataReqDto, GetHistoryReqDto, GetHistoryResDto, GetPillChannelDetailReqDto, GetPillStockDto, GetRealPillNameByKeywordResDto, HomeChannelData, HomeChannelDataResDto, PillChannelDataResDto, PillChannelDetailResDto, RealPillBodyDto, RealPillResDto } from './dto/pill-data.dto';
+import { AddLogHistoryBodyDto, AddPillChannelDataBodyDto, AddRealNameToPillCahnnelDataReqDto, GetHardwarePillChannelDatasResDto, GetHistoryReqDto, GetHistoryResDto, GetPillChannelDetailReqDto, GetPillStockDto, GetRealPillNameByKeywordResDto, HomeChannelData, HomeChannelDataResDto, PillChannelDataResDto, PillChannelDetailResDto, RealPillBodyDto, RealPillResDto } from './dto/pill-data.dto';
 import { IAddLogHistoryReq, IAddPillChannelDataReq, IAddRealNameToPillCahnnelDataReq, IRealPillData } from './interfaces/pill-data.service.interfaces';
 import { PillDataService } from './pill-data.service';
 
@@ -124,5 +124,11 @@ export class PillDataController {
     async getPillStock(@GetCurrentUserLineUID() lineUID: string): Promise<GetPillStockDto> {
         const res = await this.pillDataService.getPillStock(lineUID)
         return new GetPillStockDto(res)
+    }
+
+    @Get('getHardwarePillChannelDatas')
+    async getHardwarePillChannelDatas(@GetCurrentUserLineUID() lineUID: string): Promise<GetHardwarePillChannelDatasResDto> {
+        const res = await this.pillDataService.getHardwarePillChannelDatas(lineUID)
+        return new GetHardwarePillChannelDatasResDto(res)
     }
 }

@@ -264,3 +264,13 @@ export class GetPillStockDto {
     }
     pillStock: PillChannelDataResDto[]
 }
+
+export class GetHardwarePillChannelDatasResDto {
+    constructor(pills: IPillChannelDetail[]){
+        this.pill_channel_datas = pills.map(pill => {
+            return new PillChannelDetailResDto(pill)
+        })
+    }
+
+    pill_channel_datas: PillChannelDetailResDto[]
+}

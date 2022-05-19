@@ -10,6 +10,7 @@ export interface IPillDataService {
     getHistory(req: IGetHistoryReq): Promise<IGetHistoryRes>;
     getForgottenRate(req: IGetForgottenRateReq): Promise<IGetForgottenRateRes>;
     getPillStock(lineUID: string): Promise<IPillStocksRes>;
+    getHardwarePillChannelDatas(lineUID: string): Promise<IPillChannelDetail[]>
 }
 
 export interface IAddPillChannelDataReq {

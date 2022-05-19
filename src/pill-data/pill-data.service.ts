@@ -401,7 +401,24 @@ export class PillDataService implements IPillDataService {
 
       return pillStocks
     } catch (error) {
-      
+      console.log(error);
+      throw new BadRequestException(error);
+    }
+  }
+
+  async getHardwarePillChannelDatas(lineUID: string): Promise<IPillChannelDetail[]> {
+    try {
+      const pillChannelDatas = await this.pillChannelDataRepository.find({
+        where: { lineUID: lineUID },
+      })
+
+      return await Promise.all(pillChannelDatas.map(async(pill) => {
+        const pillDetail = await this.getPillChannelDetail({lineUID, channelID: pill.channelID})
+        return pillDetail
+      }))
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(error);
     }
   }
 }
