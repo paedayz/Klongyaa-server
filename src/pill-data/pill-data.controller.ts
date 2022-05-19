@@ -56,7 +56,7 @@ export class PillDataController {
             cid: body.cid,
             rid: body.rid
         }
-
+        
         const res = await this.pillDataService.addRealNameToPillChannelData(req)
 
         return new PillChannelDetailResDto(res)

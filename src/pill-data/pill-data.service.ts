@@ -144,9 +144,10 @@ export class PillDataService implements IPillDataService {
     req: IAddRealNameToPillCahnnelDataReq,
   ): Promise<IPillChannelDetail> {
     try {
-      const findChannelWithRealPillData = this.cidRidRepository.findOne({
+      const findChannelWithRealPillData = await this.cidRidRepository.findOne({
         where: { cid: req.cid },
       });
+      
       if (findChannelWithRealPillData) {
         await this.cidRidRepository.update({ cid: req.cid }, { rid: req.rid });
       } else {
