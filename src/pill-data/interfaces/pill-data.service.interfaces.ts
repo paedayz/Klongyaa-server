@@ -10,7 +10,13 @@ export interface IPillDataService {
     getHistory(req: IGetHistoryReq): Promise<IGetHistoryRes>;
     getForgottenRate(req: IGetForgottenRateReq): Promise<IGetForgottenRateRes>;
     getPillStock(lineUID: string): Promise<IPillStocksRes>;
-    getHardwarePillChannelDatas(lineUID: string): Promise<IPillChannelDetail[]>
+    getHardwarePillChannelDatas(lineUID: string): Promise<IPillChannelDetail[]>;
+    deletePillChannelData(req: IDeletePIllChannelDataReq): Promise<void>;
+}
+
+export interface IDeletePIllChannelDataReq {
+    lineUID: string,
+    channelID: string,
 }
 
 export interface IAddPillChannelDataReq {

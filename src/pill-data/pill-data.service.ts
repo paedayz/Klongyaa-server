@@ -10,6 +10,7 @@ import {
   IAddPillChannelDataReq,
   IAddRealNameToPillCahnnelDataReq,
   IDangerPill,
+  IDeletePIllChannelDataReq,
   IGetForgottenRateReq,
   IGetForgottenRateRes,
   IGetHistoryReq,
@@ -417,6 +418,23 @@ export class PillDataService implements IPillDataService {
         const pillDetail = await this.getPillChannelDetail({lineUID, channelID: pill.channelID})
         return pillDetail
       }))
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(error);
+    }
+  }
+
+  async deletePillChannelData(req: IDeletePIllChannelDataReq): Promise<void> {
+    try {
+      const pillChannelData = await this.pillChannelDataRepository.findOne({where: {channelID: req.channelID, lineUID: req.lineUID}})
+      const queryDeletePillChannelData = this.pillChannelDataRepository.delete({cid: pillChannelData.cid})
+      const queryDeleteTakeTimes = this.takeTimeRepository.delete({cid: pillChannelData.cid})
+      const queryDeleteCidRid = this.cidRidRepository.delete({cid: pillChannelData.cid})
+
+      await Promise.all([
+        queryDeleteCidRid, queryDeletePillChannelData, queryDeleteTakeTimes
+      ])
+      
     } catch (error) {
       console.log(error);
       throw new BadRequestException(error);

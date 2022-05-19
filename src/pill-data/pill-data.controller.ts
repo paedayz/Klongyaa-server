@@ -1,5 +1,5 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { GetCurrentUserLineUID } from 'src/common/decorators';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { GetCurrentUserLineUID, Public } from 'src/common/decorators';
 import { AddLogHistoryBodyDto, AddPillChannelDataBodyDto, AddRealNameToPillCahnnelDataReqDto, GetHardwarePillChannelDatasResDto, GetHistoryReqDto, GetHistoryResDto, GetPillChannelDetailReqDto, GetPillStockDto, GetRealPillNameByKeywordResDto, HomeChannelData, HomeChannelDataResDto, PillChannelDataResDto, PillChannelDetailResDto, RealPillBodyDto, RealPillResDto } from './dto/pill-data.dto';
 import { IAddLogHistoryReq, IAddPillChannelDataReq, IAddRealNameToPillCahnnelDataReq, IRealPillData } from './interfaces/pill-data.service.interfaces';
 import { PillDataService } from './pill-data.service';
@@ -56,7 +56,7 @@ export class PillDataController {
             cid: body.cid,
             rid: body.rid
         }
-        
+
         const res = await this.pillDataService.addRealNameToPillChannelData(req)
 
         return new PillChannelDetailResDto(res)
@@ -126,9 +126,22 @@ export class PillDataController {
         return new GetPillStockDto(res)
     }
 
-    @Get('getHardwarePillChannelDatas')
-    async getHardwarePillChannelDatas(@GetCurrentUserLineUID() lineUID: string): Promise<GetHardwarePillChannelDatasResDto> {
+    @Public()
+    @Get('getHardwarePillChannelDatas/:lineUID')
+    async getHardwarePillChannelDatas(@Param('lineUID') lineUID: string): Promise<GetHardwarePillChannelDatasResDto> {
         const res = await this.pillDataService.getHardwarePillChannelDatas(lineUID)
         return new GetHardwarePillChannelDatasResDto(res)
+    }
+
+    @Public()
+    @Post('deletePillChannelData')
+    async deletePillChannelData(
+        @Body('channelID') channelID: string,
+        @Body('lineUID') lineUID: string,
+    ): Promise<void> {
+        return await this.pillDataService.deletePillChannelData({
+            channelID,
+            lineUID,
+        })
     }
 }
