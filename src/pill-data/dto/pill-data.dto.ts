@@ -4,6 +4,10 @@ import { IGetHistoryRes, IGetRealPillNameByKeywordRes, IHomeChannelDataRes, IPil
 
 export class AddPillChannelDataBodyDto {
     @IsString()
+    @Expose({name: 'line_id'})
+    lineID: string;
+    
+    @IsString()
     @Expose({name: 'id'})
     channelID: string;
 

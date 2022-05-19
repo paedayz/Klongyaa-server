@@ -8,26 +8,6 @@ import { PillDataService } from './pill-data.service';
 export class PillDataController {
     constructor(private pillDataService: PillDataService) {}
 
-    @Post('addPillChannelData')
-    async addPillChannelData(
-        @GetCurrentUserLineUID() lineUID: string,
-        @Body() body: AddPillChannelDataBodyDto,
-        
-    ): Promise<PillChannelDataResDto> {
-        const req: IAddPillChannelDataReq = {
-            channelID: body.channelID,
-            pillName: body.pillName,
-            pillsPerTime: body.pillsPerTime,
-            stock: body.stock,
-            takeTimes: body.takeTimes,
-            total: body.total,
-            lineUID,
-        }
-
-        const pillChannelData = await this.pillDataService.addPillChannelData(req)
-        return new PillChannelDataResDto(pillChannelData)
-    }
-
     @Post('addRealPillData')
     async addRealPillData(
         @Body() body: RealPillBodyDto,
@@ -117,6 +97,26 @@ export class PillDataController {
     async getHardwarePillChannelDatas(@Param('lineUID') lineUID: string): Promise<GetHardwarePillChannelDatasResDto> {
         const res = await this.pillDataService.getHardwarePillChannelDatas(lineUID)
         return new GetHardwarePillChannelDatasResDto(res)
+    }
+
+    @Public()
+    @Post('addPillChannelData')
+    async addPillChannelData(
+        @Body() body: AddPillChannelDataBodyDto,
+        
+    ): Promise<PillChannelDataResDto> {
+        const req: IAddPillChannelDataReq = {
+            channelID: body.channelID,
+            pillName: body.pillName,
+            pillsPerTime: body.pillsPerTime,
+            stock: body.stock,
+            takeTimes: body.takeTimes,
+            total: body.total,
+            lineUID: body.lineID,
+        }
+
+        const pillChannelData = await this.pillDataService.addPillChannelData(req)
+        return new PillChannelDataResDto(pillChannelData)
     }
 
     @Public()
