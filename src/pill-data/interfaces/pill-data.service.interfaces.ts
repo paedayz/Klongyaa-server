@@ -16,6 +16,7 @@ export interface IAddPillChannelDataReq {
     lineUID: string;
     channelID: string;
     pillName: string;
+    pillsPerTime: number;
     total?: number;
     stock: number;
     takeTimes: string[]
@@ -25,6 +26,7 @@ export interface IPillChannelDataRes {
     cid: string;
     channelID: string;
     pillName: string;
+    pillsPerTime: number;
     total?: number;
     stock: number;
     takeTimes: string[]

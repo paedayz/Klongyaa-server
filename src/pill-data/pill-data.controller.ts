@@ -17,6 +17,7 @@ export class PillDataController {
         const req: IAddPillChannelDataReq = {
             channelID: body.channelID,
             pillName: body.pillName,
+            pillsPerTime: body.pillsPerTime,
             stock: body.stock,
             takeTimes: body.takeTimes,
             total: body.total,

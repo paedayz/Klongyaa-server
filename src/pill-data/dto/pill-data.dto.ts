@@ -4,23 +4,26 @@ import { IGetHistoryRes, IGetRealPillNameByKeywordRes, IHomeChannelDataRes, IPil
 
 export class AddPillChannelDataBodyDto {
     @IsString()
-    @Expose({name: 'channel_id'})
+    @Expose({name: 'id'})
     channelID: string;
 
     @IsString()
-    @Expose({name: 'pill_name'})
+    @Expose({name: 'name'})
     pillName: string;
 
+    @IsNumber()
+    @Expose({name: 'pillsPerTime'})
+    pillsPerTime: number;
+
     // @IsNumber({allowNaN: true})
-    @Expose({name: 'total'})
+    @Expose({name: 'totalPills'})
     total?: number;
 
-    @IsNumber()
     @Expose({name: 'stock'})
-    stock: number;
+    stock?: number;
 
     @IsString({each: true})
-    @Expose({name: 'take_times'})
+    @Expose({name: 'timeToTake'})
     takeTimes: string[]
 }
 
@@ -32,7 +35,8 @@ export class PillChannelDataResDto {
         this.total = pillChannelData.total;
         this.stock = pillChannelData.stock;
         this.take_times = pillChannelData.takeTimes;
-        this.created_at = pillChannelData.createdAt
+        this.created_at = pillChannelData.createdAt;
+        this.pillsPerTime = pillChannelData.pillsPerTime
     }
 
     @IsString()
@@ -46,6 +50,10 @@ export class PillChannelDataResDto {
     @IsString()
     @Expose({name: 'pillName'})
     pill_name: string;
+
+    @IsString()
+    @Expose({name: 'pillsPerTime'})
+    pillsPerTime: number;
 
     @IsString()
     @Expose({name: 'total'})

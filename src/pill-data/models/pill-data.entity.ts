@@ -14,10 +14,13 @@ export class PillChannelDataEntity {
   @Column()
   pillName: string;
 
+  @Column()
+  pillsPerTime: number;
+
   @Column({ default: 0 })
   total: number;
 
-  @Column()
+  @Column({ default: 0 })
   stock: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

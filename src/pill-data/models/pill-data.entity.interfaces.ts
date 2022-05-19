@@ -2,8 +2,9 @@ export interface ISavePillChannelData {
     lineUID: string;
     channelID: string;
     pillName: string;
+    pillsPerTime: number;
     total?: number;
-    stock: number;
+    stock?: number;
 }
 
 export interface ISaveTakeTime {

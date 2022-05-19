@@ -66,6 +66,7 @@ export class PillDataService implements IPillDataService {
       const savePillChannelData: ISavePillChannelData = {
         channelID: req.channelID,
         pillName: req.pillName,
+        pillsPerTime: req.pillsPerTime,
         stock: req.stock,
         total: req.total,
         lineUID: req.lineUID,
@@ -96,6 +97,7 @@ export class PillDataService implements IPillDataService {
         stock: pillChannelData.stock,
         takeTimes: timesToTakePill,
         total: pillChannelData.total,
+        pillsPerTime: pillChannelData.pillsPerTime,
       };
     } catch (error) {
       console.log(error);
@@ -202,6 +204,7 @@ export class PillDataService implements IPillDataService {
         total: pillChannelQueryResData.total,
         takeTimes: takeTimeQueryResData.map((obj) => obj.time),
         realPillData: realPillData,
+        pillsPerTime: pillChannelQueryResData.pillsPerTime,
       };
 
       return res;
@@ -298,6 +301,7 @@ export class PillDataService implements IPillDataService {
         total: pillChannelDatas.total,
         takeTimes: takeTimesData.map((obj) => obj.time),
         realPillData: realPillData,
+        pillsPerTime: pillChannelDatas.pillsPerTime
       };
     } catch (error) {
       console.log(error);
@@ -389,7 +393,8 @@ export class PillDataService implements IPillDataService {
             pillName: pill.pillName,
             stock: pill.stock,
             total: pill.total,
-            takeTimes: takeTimes.map(time => time.time)
+            takeTimes: takeTimes.map(time => time.time),
+            pillsPerTime: pill.pillsPerTime
           }
          }))
       }
