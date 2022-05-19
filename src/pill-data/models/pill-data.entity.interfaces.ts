@@ -30,7 +30,7 @@ export interface ISaveCidRid {
 }
 
 export interface ISaveLogHistory {
-    cid: string;
+    pillName: string;
     lineUID: string;
     task: string;
 }

@@ -62,20 +62,6 @@ export class PillDataController {
         return new PillChannelDetailResDto(res)
     }
 
-    @Post('addLogHistory')
-    async addLogHistory(
-        @Body() body: AddLogHistoryBodyDto,
-        @GetCurrentUserLineUID() lineUID: string
-        ): Promise<void> {
-        const req: IAddLogHistoryReq = {
-            channelID: body.channelID,
-            task: body.task,
-            lineUID
-        }
-
-        return await this.pillDataService.addLogHistory(req)
-    }
-
     @Get('getHomeChannelData')
     async getHomeChannelData(@GetCurrentUserLineUID() lineUID: string): Promise<HomeChannelDataResDto> {
         const res = await this.pillDataService.getHomeChannelData(lineUID)
@@ -143,5 +129,19 @@ export class PillDataController {
             channelID,
             lineUID,
         })
+    }
+
+    @Public()
+    @Post('addLogHistory')
+    async addLogHistory(
+        @Body() body: AddLogHistoryBodyDto
+        ): Promise<void> {
+        const req: IAddLogHistoryReq = {
+            channelID: body.channelID,
+            task: body.task,
+            lineUID: body.lineUID
+        }
+
+        return await this.pillDataService.addLogHistory(req)
     }
 }

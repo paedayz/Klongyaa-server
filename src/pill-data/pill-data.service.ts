@@ -223,7 +223,7 @@ export class PillDataService implements IPillDataService {
           where: [{ channelID: req.channelID }, { lineUID: req.lineUID }],
         });
         const saveLogHistoryData: ISaveLogHistory = {
-          cid: pillChannelData.cid,
+          pillName: pillChannelData.pillName,
           lineUID: req.lineUID,
           task: req.task,
         };
@@ -434,7 +434,7 @@ export class PillDataService implements IPillDataService {
       await Promise.all([
         queryDeleteCidRid, queryDeletePillChannelData, queryDeleteTakeTimes
       ])
-      
+
     } catch (error) {
       console.log(error);
       throw new BadRequestException(error);

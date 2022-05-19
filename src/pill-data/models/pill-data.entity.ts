@@ -82,12 +82,12 @@ export class DangerPillEntity {
 }
 
 @Entity('log_history')
-export class LogHistoryEntity {
+export class LogHistoryEntity { 
   @PrimaryGeneratedColumn('uuid')
   hid: string;
 
   @Column()
-  cid: string;
+  pillName: string;
 
   @Column()
   lineUID: string;
