@@ -349,7 +349,7 @@ export class PillDataService implements IPillDataService {
   private getFirstLastDay(filterBy: string): [string, string] {
     let firstday: string;
     let lastday: string;
-    
+
     var curr = new Date();
 
     let first: Date;
@@ -363,14 +363,14 @@ export class PillDataService implements IPillDataService {
 
     if (filterBy === TXT_WEEK) {
       first = new Date(curr.getTime() - 7 * 24 * 60 * 60 * 1000);
-      last = curr
+      last = curr;
     } else if (filterBy === TXT_MONTH) {
       first = new Date(year, month, 1, hour, min, sec);
-      last = curr
+      last = curr;
     } else {
-      const date_amount = new Date(year, month - 1, 0).getDate()
+      const date_amount = new Date(year, month - 1, 0).getDate();
       first = new Date(year, month - 1, 1, hour, min, sec);
-      last  = new Date(year, month - 1, date_amount, hour, min, sec);
+      last = new Date(year, month - 1, date_amount, hour, min, sec);
     }
 
     firstday = first.toISOString();
@@ -395,16 +395,16 @@ export class PillDataService implements IPillDataService {
         .getMany();
 
       return {
-        histories: logHistoryDatas.map(log => {
+        histories: logHistoryDatas.map((log) => {
           return {
             dateTime: log.createdAt,
             pillName: log.pillName,
             task: log.task,
-          }
+          };
         }),
         start_date: firstday,
         end_date: lastday,
-      }
+      };
     } catch (error) {
       console.log(error);
       throw new BadRequestException(error);
@@ -415,10 +415,43 @@ export class PillDataService implements IPillDataService {
     req: IGetForgottenRateReq,
   ): Promise<IGetForgottenRateRes> {
     try {
-      const histories = this.
-    } catch (error) {
-      
-    }
+      const [firstday, lastday] = this.getFirstLastDay(req.filterBy);
+
+      const histories = await this.logHistoryRepository
+        .createQueryBuilder()
+        .where('LogHistoryEntity.createdAt BETWEEN :begin AND :end', {
+          begin: firstday,
+          end: lastday,
+        })
+        .andWhere("LogHistoryEntity.task = 'Forgot to take pill' ")
+        .getMany();
+
+      let countArr = [];
+
+      if (req.filterBy === TXT_WEEK) {
+        const startDay = new Date(firstday).getDate();
+        const endDay = new Date(lastday).getDate();
+
+        for (let i = startDay; i <= endDay; i++) {
+          let counter: number = 0;
+          counter = histories.filter(
+            (log) => new Date(log.createdAt).getDate() === i,
+          ).length;
+          countArr.push(counter);
+        }
+      } else if (req.filterBy === TXT_MONTH) {
+        countArr = [0, 0, 0, 0];
+        histories.map((log) => {
+          let arrIndex = Math.floor(new Date(log.createdAt).getDate() / 7);
+          countArr[arrIndex] = countArr[arrIndex] + 1;
+        });
+      }
+      return {
+        end_date: lastday,
+        start_date: firstday,
+        rates: countArr,
+      };
+    } catch (error) {}
   }
 
   async getPillStock(lineUID: string): Promise<IPillStocksRes> {

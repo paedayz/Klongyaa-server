@@ -1,6 +1,6 @@
 import { Expose } from "class-transformer";
 import { IsDate, IsNumber, IsString } from "class-validator";
-import { IGetHistoryRes, IGetRealPillNameByKeywordRes, IHomeChannelDataRes, IPillChannelDataRes, IPillChannelDetail, IPillStocksRes, IRealPillData } from "../interfaces/pill-data.service.interfaces";
+import { IGetForgottenRateRes, IGetHistoryRes, IGetRealPillNameByKeywordRes, IHomeChannelDataRes, IPillChannelDataRes, IPillChannelDetail, IPillStocksRes, IRealPillData } from "../interfaces/pill-data.service.interfaces";
 
 export class AddPillChannelDataBodyDto {
     @IsString()
@@ -263,6 +263,9 @@ export class GetHistoryResDto {
                 task: log.task,
             }
         })
+
+        this.start_date = obj.start_date;
+        this.end_date = obj.end_date
     }
     @Expose({name: 'histories'})
     histories: HistoryDto[]
@@ -293,4 +296,18 @@ export class GetHardwarePillChannelDatasResDto {
     }
 
     pill_channel_datas: PillChannelDetailResDto[]
+}
+
+export class GetForgottenRateResDto {
+    constructor(obj: IGetForgottenRateRes) {
+        this.rates = obj.rates;
+        this.start_date = obj.start_date;
+        this.end_date = obj.end_date;
+    }
+
+    rates: number[]
+
+    start_date: string;
+
+    end_date: string;
 }
