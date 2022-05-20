@@ -95,12 +95,12 @@ export interface IHistory {
     dateTime: Date;
     task: string;
     pillName: string;
-    startDate: string;
-    endDate: string;
 }
 
 export interface IGetHistoryRes {
     histories: IHistory[]
+    start_date: string;
+    end_date: string;
 }
 
 export interface IGetForgottenRateReq {

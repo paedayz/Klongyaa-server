@@ -398,12 +398,12 @@ export class PillDataService implements IPillDataService {
         histories: logHistoryDatas.map(log => {
           return {
             dateTime: log.createdAt,
-            endDate: lastday,
-            startDate: firstday,
             pillName: log.pillName,
-            task: log.task
+            task: log.task,
           }
-        })
+        }),
+        start_date: firstday,
+        end_date: lastday,
       }
     } catch (error) {
       console.log(error);
@@ -414,7 +414,11 @@ export class PillDataService implements IPillDataService {
   async getForgottenRate(
     req: IGetForgottenRateReq,
   ): Promise<IGetForgottenRateRes> {
-    throw new Error('Method not implemented.');
+    try {
+      const histories = this.
+    } catch (error) {
+      
+    }
   }
 
   async getPillStock(lineUID: string): Promise<IPillStocksRes> {
