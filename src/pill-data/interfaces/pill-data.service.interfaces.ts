@@ -92,10 +92,11 @@ export interface IGetHistoryReq {
 }
 
 export interface IHistory {
-    time: string;
-    date: string;
     dateTime: Date;
     task: string;
+    pillName: string;
+    startDate: string;
+    endDate: string;
 }
 
 export interface IGetHistoryRes {

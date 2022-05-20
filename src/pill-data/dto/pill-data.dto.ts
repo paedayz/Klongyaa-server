@@ -239,26 +239,38 @@ export class GetHistoryReqDto {
 }
 
 export class HistoryDto {
-    @IsString()
-    @Expose({name: 'time'})
-    time: string;
-
-    @IsString()
-    @Expose({name: 'date'})
-    date: string;
-
     @IsDate()
-    @Expose({name: 'date_time'})
-    dateTime: Date;
+    @Expose({name: 'dateTime'})
+    date_time: Date;
 
     @IsString()
     @Expose({name: 'task'})
     task: string;
+
+    @IsString()
+    @Expose({name: 'pillName'})
+    pill_name: string;
+
+    @IsString()
+    @Expose({name: 'startDate'})
+    start_date: string;
+
+    @IsString()
+    @Expose({name: 'endDate'})
+    end_date: string;
 }
 
 export class GetHistoryResDto {
     constructor(obj: IGetHistoryRes) {
-        this.histories = obj.histories
+        this.histories = obj.histories.map(log => {
+            return {
+                date_time: log.dateTime,
+                end_date: log.endDate,
+                pill_name: log.pillName,
+                start_date: log.startDate,
+                task: log.task,
+            }
+        })
     }
     @Expose({name: 'histories'})
     histories: HistoryDto[]

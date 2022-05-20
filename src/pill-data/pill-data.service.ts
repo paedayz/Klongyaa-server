@@ -4,6 +4,8 @@ import { Like, Repository } from 'typeorm';
 import {
   getHistoryFilterByList,
   taskList,
+  TXT_MONTH,
+  TXT_WEEK,
 } from './constants/pill-data.constants';
 import {
   IAddLogHistoryReq,
@@ -148,7 +150,7 @@ export class PillDataService implements IPillDataService {
       const findChannelWithRealPillData = await this.cidRidRepository.findOne({
         where: { cid: req.cid },
       });
-      
+
       if (findChannelWithRealPillData) {
         await this.cidRidRepository.update({ cid: req.cid }, { rid: req.rid });
       } else {
@@ -290,7 +292,7 @@ export class PillDataService implements IPillDataService {
           property: realPillQueryResData.property,
           effect: realPillQueryResData.effect,
           dangerPills: dangerPillQueryResData,
-          rid: realPillQueryResData.rid
+          rid: realPillQueryResData.rid,
         };
       }
 
@@ -303,7 +305,7 @@ export class PillDataService implements IPillDataService {
         total: pillChannelDatas.total,
         takeTimes: takeTimesData.map((obj) => obj.time),
         realPillData: realPillData,
-        pillsPerTime: pillChannelDatas.pillsPerTime
+        pillsPerTime: pillChannelDatas.pillsPerTime,
       };
     } catch (error) {
       console.log(error);
@@ -331,7 +333,7 @@ export class PillDataService implements IPillDataService {
             property: pill.property,
             effect: pill.effect,
             dangerPills,
-            rid: pill.rid
+            rid: pill.rid,
           };
         }),
       );
@@ -344,18 +346,46 @@ export class PillDataService implements IPillDataService {
     }
   }
 
+  private getFirstLastDay(filterBy: string): [string, string] {
+    let firstday: string;
+    let lastday: string;
+    
+    var curr = new Date();
+
+    let first: Date;
+    let last: Date;
+
+    const month = curr.getMonth();
+    const year = curr.getFullYear();
+    const hour = curr.getHours();
+    const min = curr.getMinutes();
+    const sec = curr.getSeconds();
+
+    if (filterBy === TXT_WEEK) {
+      first = new Date(curr.getTime() - 7 * 24 * 60 * 60 * 1000);
+      last = curr
+    } else if (filterBy === TXT_MONTH) {
+      first = new Date(year, month, 1, hour, min, sec);
+      last = curr
+    } else {
+      const date_amount = new Date(year, month - 1, 0).getDate()
+      first = new Date(year, month - 1, 1, hour, min, sec);
+      last  = new Date(year, month - 1, date_amount, hour, min, sec);
+    }
+
+    firstday = first.toISOString();
+    lastday = last.toISOString();
+
+    return [firstday, lastday];
+  }
+
   async getHistory(req: IGetHistoryReq): Promise<IGetHistoryRes> {
     try {
       if (!getHistoryFilterByList.includes(req.filterBy))
         throw new BadRequestException('Filter not matches');
-      var curr = new Date(); // get current date
-      var first = curr.getDate() - curr.getDay(); // First day is the day of the month - the day of the week
-      var last = first + 6; // last day is the first day + 6
 
-      var firstday = new Date(curr.setDate(first)).toDateString();
-      var lastday = new Date(curr.setDate(last)).toDateString();
-      console.log(firstday);
-      console.log(lastday)
+      const [firstday, lastday] = this.getFirstLastDay(req.filterBy);
+
       const logHistoryDatas = await this.logHistoryRepository
         .createQueryBuilder()
         .where('LogHistoryEntity.createdAt BETWEEN :begin AND :end', {
@@ -363,8 +393,18 @@ export class PillDataService implements IPillDataService {
           end: lastday,
         })
         .getMany();
- 
-      return null
+
+      return {
+        histories: logHistoryDatas.map(log => {
+          return {
+            dateTime: log.createdAt,
+            endDate: lastday,
+            startDate: firstday,
+            pillName: log.pillName,
+            task: log.task
+          }
+        })
+      }
     } catch (error) {
       console.log(error);
       throw new BadRequestException(error);
@@ -381,43 +421,54 @@ export class PillDataService implements IPillDataService {
     try {
       const pillChannelDatas = await this.pillChannelDataRepository.find({
         where: {
-          lineUID
+          lineUID,
         },
       });
 
       const pillStocks: IPillStocksRes = {
-         pillStocks: await Promise.all(pillChannelDatas.map(async(pill): Promise<IPillChannelDataRes> => {
-          const takeTimes = await this.takeTimeRepository.find({where: {cid: pill.cid}})
-          return {
-            channelID: pill.channelID,
-            cid: pill.cid,
-            createdAt: pill.createdAt,
-            pillName: pill.pillName,
-            stock: pill.stock,
-            total: pill.total,
-            takeTimes: takeTimes.map(time => time.time),
-            pillsPerTime: pill.pillsPerTime
-          }
-         }))
-      }
+        pillStocks: await Promise.all(
+          pillChannelDatas.map(async (pill): Promise<IPillChannelDataRes> => {
+            const takeTimes = await this.takeTimeRepository.find({
+              where: { cid: pill.cid },
+            });
+            return {
+              channelID: pill.channelID,
+              cid: pill.cid,
+              createdAt: pill.createdAt,
+              pillName: pill.pillName,
+              stock: pill.stock,
+              total: pill.total,
+              takeTimes: takeTimes.map((time) => time.time),
+              pillsPerTime: pill.pillsPerTime,
+            };
+          }),
+        ),
+      };
 
-      return pillStocks
+      return pillStocks;
     } catch (error) {
       console.log(error);
       throw new BadRequestException(error);
     }
   }
 
-  async getHardwarePillChannelDatas(lineUID: string): Promise<IPillChannelDetail[]> {
+  async getHardwarePillChannelDatas(
+    lineUID: string,
+  ): Promise<IPillChannelDetail[]> {
     try {
       const pillChannelDatas = await this.pillChannelDataRepository.find({
         where: { lineUID: lineUID },
-      })
+      });
 
-      return await Promise.all(pillChannelDatas.map(async(pill) => {
-        const pillDetail = await this.getPillChannelDetail({lineUID, channelID: pill.channelID})
-        return pillDetail
-      }))
+      return await Promise.all(
+        pillChannelDatas.map(async (pill) => {
+          const pillDetail = await this.getPillChannelDetail({
+            lineUID,
+            channelID: pill.channelID,
+          });
+          return pillDetail;
+        }),
+      );
     } catch (error) {
       console.log(error);
       throw new BadRequestException(error);
@@ -426,15 +477,24 @@ export class PillDataService implements IPillDataService {
 
   async deletePillChannelData(req: IDeletePIllChannelDataReq): Promise<void> {
     try {
-      const pillChannelData = await this.pillChannelDataRepository.findOne({where: {channelID: req.channelID, lineUID: req.lineUID}})
-      const queryDeletePillChannelData = this.pillChannelDataRepository.delete({cid: pillChannelData.cid})
-      const queryDeleteTakeTimes = this.takeTimeRepository.delete({cid: pillChannelData.cid})
-      const queryDeleteCidRid = this.cidRidRepository.delete({cid: pillChannelData.cid})
+      const pillChannelData = await this.pillChannelDataRepository.findOne({
+        where: { channelID: req.channelID, lineUID: req.lineUID },
+      });
+      const queryDeletePillChannelData = this.pillChannelDataRepository.delete({
+        cid: pillChannelData.cid,
+      });
+      const queryDeleteTakeTimes = this.takeTimeRepository.delete({
+        cid: pillChannelData.cid,
+      });
+      const queryDeleteCidRid = this.cidRidRepository.delete({
+        cid: pillChannelData.cid,
+      });
 
       await Promise.all([
-        queryDeleteCidRid, queryDeletePillChannelData, queryDeleteTakeTimes
-      ])
-
+        queryDeleteCidRid,
+        queryDeletePillChannelData,
+        queryDeleteTakeTimes,
+      ]);
     } catch (error) {
       console.log(error);
       throw new BadRequestException(error);
