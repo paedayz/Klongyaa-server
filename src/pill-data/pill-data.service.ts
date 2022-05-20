@@ -220,7 +220,7 @@ export class PillDataService implements IPillDataService {
     try {
       if (taskList.includes(req.task)) {
         const pillChannelData = await this.pillChannelDataRepository.findOne({
-          where: [{ channelID: req.channelID }, { lineUID: req.lineUID }],
+          where: [{ channelID: req.channelID, lineUID: req.lineUID }],
         });
         const saveLogHistoryData: ISaveLogHistory = {
           pillName: pillChannelData.pillName,
