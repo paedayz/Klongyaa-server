@@ -361,14 +361,16 @@ export class PillDataService implements IPillDataService {
     const min = curr.getMinutes();
     const sec = curr.getSeconds();
 
+    const date_amount = new Date(year, month - 1, 0).getDate();
+
     if (filterBy === TXT_WEEK) {
       first = new Date(curr.getTime() - 7 * 24 * 60 * 60 * 1000);
       last = curr;
     } else if (filterBy === TXT_MONTH) {
       first = new Date(year, month, 1, hour, min, sec);
-      last = curr;
+      last = new Date(year, month, date_amount, hour, min, sec);;
     } else {
-      const date_amount = new Date(year, month - 1, 0).getDate();
+      
       first = new Date(year, month - 1, 1, hour, min, sec);
       last = new Date(year, month - 1, date_amount, hour, min, sec);
     }
