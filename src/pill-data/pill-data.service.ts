@@ -218,6 +218,16 @@ export class PillDataService implements IPillDataService {
     }
   }
 
+  async deleteRealNameInPillChannelData(req: IAddRealNameToPillCahnnelDataReq): Promise<void> {
+    try {
+      await this.cidRidRepository.delete({cid: req.cid, rid: req.rid})
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(error);
+    }
+  }
+
+
   async addLogHistory(req: IAddLogHistoryReq): Promise<void> {
     try {
       if (taskList.includes(req.task)) {

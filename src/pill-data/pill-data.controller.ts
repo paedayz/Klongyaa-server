@@ -42,6 +42,18 @@ export class PillDataController {
         return new PillChannelDetailResDto(res)
     }
 
+    @Post('deleteRealNameInPillChannelData')
+    async deleteRealNameInPillChannelData(@Body() body: AddRealNameToPillChannelDataReqDto) : Promise<void> {
+        const req: IAddRealNameToPillCahnnelDataReq = {
+            cid: body.cid,
+            rid: body.rid
+        }
+
+        const res = await this.pillDataService.deleteRealNameInPillChannelData(req)
+
+        return res
+    }
+
     @Get('getHomeChannelData')
     async getHomeChannelData(@GetCurrentUserLineUID() lineUID: string): Promise<HomeChannelDataResDto> {
         const res = await this.pillDataService.getHomeChannelData(lineUID)

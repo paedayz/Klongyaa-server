@@ -4,6 +4,9 @@ export interface IPillDataService {
   addRealNameToPillChannelData(
     req: IAddRealNameToPillCahnnelDataReq,
   ): Promise<IPillChannelDetail>;
+  deleteRealNameInPillChannelData(
+    req: IAddRealNameToPillCahnnelDataReq,
+  ): Promise<void>;
   addLogHistory(req: IAddLogHistoryReq): Promise<void>;
   getHomeChannelData(lineUID: string): Promise<IHomeChannelDataRes>;
   getPillChannelDetail(
