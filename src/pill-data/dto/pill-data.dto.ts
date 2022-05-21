@@ -140,7 +140,7 @@ export class DangerPillResDto {
     reason: string;
 }
 
-export class AddRealNameToPillCahnnelDataReqDto {
+export class AddRealNameToPillChannelDataReqDto {
     @IsString()
     @Expose({name: 'cid'})
     cid: string;

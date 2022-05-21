@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { GetCurrentUserLineUID, Public } from 'src/common/decorators';
-import { AddLogHistoryBodyDto, AddPillChannelDataBodyDto, AddRealNameToPillCahnnelDataReqDto, GetForgottenRateResDto, GetHardwarePillChannelDatasResDto, GetHistoryReqDto, GetHistoryResDto, GetPillChannelDetailReqDto, GetPillStockDto, GetRealPillNameByKeywordResDto, HomeChannelData, HomeChannelDataResDto, PillChannelDataResDto, PillChannelDetailResDto, RealPillBodyDto, RealPillResDto } from './dto/pill-data.dto';
+import { AddLogHistoryBodyDto, AddPillChannelDataBodyDto, AddRealNameToPillChannelDataReqDto, GetForgottenRateResDto, GetHardwarePillChannelDatasResDto, GetHistoryReqDto, GetHistoryResDto, GetPillChannelDetailReqDto, GetPillStockDto, GetRealPillNameByKeywordResDto, HomeChannelData, HomeChannelDataResDto, PillChannelDataResDto, PillChannelDetailResDto, RealPillBodyDto, RealPillResDto } from './dto/pill-data.dto';
 import { IAddLogHistoryReq, IAddPillChannelDataReq, IAddRealNameToPillCahnnelDataReq, IRealPillData } from './interfaces/pill-data.service.interfaces';
 import { PillDataService } from './pill-data.service';
 
@@ -30,8 +30,8 @@ export class PillDataController {
         return new RealPillResDto(realPillData)
     }
 
-    @Post('addRealNameToPillCahnnelDataReqDto')
-    async addRealNameToPillCahnnelDataReqDto(@Body() body: AddRealNameToPillCahnnelDataReqDto) : Promise<PillChannelDetailResDto> {
+    @Post('addRealNameToPillChannelData')
+    async addRealNameToPillChannelData(@Body() body: AddRealNameToPillChannelDataReqDto) : Promise<PillChannelDetailResDto> {
         const req: IAddRealNameToPillCahnnelDataReq = {
             cid: body.cid,
             rid: body.rid
