@@ -5,6 +5,7 @@ import {
   getHistoryFilterByList,
   taskList,
   TXT_MONTH,
+  TXT_TAKE_PILL,
   TXT_WEEK,
 } from './constants/pill-data.constants';
 import {
@@ -234,6 +235,12 @@ export class PillDataService implements IPillDataService {
         const pillChannelData = await this.pillChannelDataRepository.findOne({
           where: [{ channelID: req.channelID, lineUID: req.lineUID }],
         });
+
+        if(req.task === TXT_TAKE_PILL) {
+          let total = pillChannelData.total - pillChannelData.pillsPerTime
+          if(total < 0) total = 0;
+          await this.pillChannelDataRepository.update({cid: pillChannelData.cid}, {total})
+        }
         const saveLogHistoryData: ISaveLogHistory = {
           pillName: pillChannelData.pillName,
           lineUID: req.lineUID,
